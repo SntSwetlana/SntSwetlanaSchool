@@ -1,0 +1,141 @@
+/* ArithmeticPuzzle.css */
+
+.puzzle-container {
+  font-family: Arial, sans-serif;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.instructions {
+  margin-bottom: 30px;
+  color: #555;
+}
+
+.arithmetic-puzzle {
+  display: inline-block;
+  margin: 20px 0;
+}
+
+.equation-table {
+  border-collapse: collapse;
+  margin: 0 auto;
+  font-size: 24px;
+}
+
+.equation-table td {
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  vertical-align: middle;
+  padding: 5px;
+}
+
+.number-cell {
+  font-weight: bold;
+  font-size: 28px;
+}
+
+.operator-cell {
+  font-size: 28px;
+  font-weight: bold;
+  padding-right: 10px;
+}
+
+.input-cell {
+  position: relative;
+}
+
+.fill-in-input {
+  width: 40px;
+  height: 40px;
+  font-size: 24px;
+  text-align: center;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+  transition: all 0.3s;
+}
+
+.fill-in-input:focus {
+  border-color: #4a90e2;
+  box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+}
+
+.fill-in-input.correct {
+  border-color: #4CAF50;
+  background-color: #e8f5e9;
+}
+
+.fill-in-input.incorrect {
+  border-color: #f44336;
+  background-color: #ffebee;
+}
+
+.divider-line {
+  border-top: 2px solid #333;
+  height: 1px;
+  padding: 0;
+}
+
+.controls {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.submit-button, .reset-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.submit-button {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.submit-button:hover:not(:disabled) {
+  background-color: #357ae8;
+}
+
+.submit-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.reset-button {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.reset-button:hover {
+  background-color: #e0e0e0;
+}
+
+.feedback {
+  margin-top: 15px;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  border-left: 4px solid #4a90e2;
+}
+
+.hint {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #fff8e1;
+  border-radius: 5px;
+  font-size: 14px;
+  color: #666;
+  border: 1px dashed #ffc107;
+}
+
+.hint p {
+  margin: 0;
+}
