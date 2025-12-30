@@ -1,98 +1,119 @@
 /* ArithmeticPuzzle.css */
 
 .puzzle-container {
-  font-family: Arial, sans-serif;
-  max-width: 400px;
-  margin: 0 auto;
+  font-family: 'Arial', sans-serif;
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 25px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.puzzles-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
   padding: 20px;
-  text-align: center;
+}
+
+.puzzle-wrapper {
+  background-color: white;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .instructions {
-  margin-bottom: 30px;
+  margin-bottom: 25px;
   color: #555;
+  font-size: 16px;
+  line-height: 1.5;
 }
 
 .arithmetic-puzzle {
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin: 20px 0;
 }
 
-.equation-table {
-  border-collapse: collapse;
-  margin: 0 auto;
-  font-size: 24px;
+.equation-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 32px;
+  font-family: 'Courier New', monospace;
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  border: 2px solid #e0e0e0;
+  min-height: 80px;
 }
 
-.equation-table td {
-  width: 50px;
-  height: 50px;
+.display-char {
+  min-width: 30px;
   text-align: center;
-  vertical-align: middle;
-  padding: 5px;
-}
-
-.number-cell {
   font-weight: bold;
-  font-size: 28px;
-}
-
-.operator-cell {
-  font-size: 28px;
-  font-weight: bold;
-  padding-right: 10px;
-}
-
-.input-cell {
-  position: relative;
+  color: #333;
 }
 
 .fill-in-input {
-  width: 40px;
-  height: 40px;
-  font-size: 24px;
+  width: 50px;
+  height: 50px;
+  font-size: 28px;
   text-align: center;
   border: 2px solid #ccc;
-  border-radius: 4px;
+  border-radius: 6px;
   outline: none;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  background-color: #fff;
 }
 
 .fill-in-input:focus {
   border-color: #4a90e2;
-  box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+  transform: translateY(-2px);
+}
+
+.fill-in-input::placeholder {
+  color: #bbb;
+  font-size: 20px;
 }
 
 .fill-in-input.correct {
   border-color: #4CAF50;
   background-color: #e8f5e9;
+  color: #2e7d32;
 }
 
 .fill-in-input.incorrect {
   border-color: #f44336;
   background-color: #ffebee;
-}
-
-.divider-line {
-  border-top: 2px solid #333;
-  height: 1px;
-  padding: 0;
+  color: #c62828;
 }
 
 .controls {
-  margin-top: 30px;
+  margin-top: 25px;
   display: flex;
   justify-content: center;
-  gap: 15px;
+  gap: 20px;
 }
 
 .submit-button, .reset-button {
-  padding: 10px 20px;
+  padding: 12px 24px;
   font-size: 16px;
+  font-weight: 600;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  min-width: 120px;
 }
 
 .submit-button {
@@ -102,40 +123,137 @@
 
 .submit-button:hover:not(:disabled) {
   background-color: #357ae8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(53, 122, 232, 0.3);
 }
 
 .submit-button:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .reset-button {
-  background-color: #f0f0f0;
+  background-color: #f5f5f5;
   color: #333;
+  border: 1px solid #ddd;
 }
 
 .reset-button:hover {
   background-color: #e0e0e0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .feedback {
-  margin-top: 15px;
-  padding: 10px;
-  background-color: #f8f9fa;
-  border-radius: 5px;
-  border-left: 4px solid #4a90e2;
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #e3f2fd;
+  border-radius: 6px;
+  border-left: 4px solid #2196f3;
+  font-size: 16px;
+  color: #1565c0;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .hint {
-  margin-top: 20px;
-  padding: 10px;
+  margin-top: 25px;
+  padding: 15px;
   background-color: #fff8e1;
-  border-radius: 5px;
+  border-radius: 6px;
+  border: 1px solid #ffd54f;
   font-size: 14px;
-  color: #666;
-  border: 1px dashed #ffc107;
+  color: #5d4037;
 }
 
 .hint p {
-  margin: 0;
+  margin: 8px 0;
+}
+
+.hint code {
+  background-color: #f5f5f5;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  color: #d84315;
+}
+
+.puzzle-info {
+  margin-top: 25px;
+  padding: 15px;
+  background-color: #f5f5f5;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #666;
+}
+
+.puzzle-info ul {
+  margin: 10px 0;
+  padding-left: 20px;
+}
+
+.puzzle-info li {
+  margin: 5px 0;
+}
+
+.puzzle-info code {
+  background-color: #e0e0e0;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .puzzle-container {
+    margin: 10px;
+    padding: 15px;
+  }
+  
+  .equation-display {
+    font-size: 24px;
+    padding: 15px;
+  }
+  
+  .fill-in-input {
+    width: 40px;
+    height: 40px;
+    font-size: 22px;
+  }
+  
+  .controls {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .submit-button, .reset-button {
+    width: 100%;
+    max-width: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .equation-display {
+    font-size: 20px;
+    gap: 5px;
+  }
+  
+  .fill-in-input {
+    width: 35px;
+    height: 35px;
+    font-size: 18px;
+  }
 }

@@ -1,7 +1,6 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import ArithmeticPuzzle from './ArithmeticPuzzle'
+import ColumnArithmeticPuzzle from './ColumnArithmeticPuzzle'
 import './App.css'
 
 function App() {
@@ -10,7 +9,25 @@ function App() {
   return (
     <>
       <div className="App">
-        <ArithmeticPuzzle />
+        <ColumnArithmeticPuzzle 
+          equation="594+160=754"
+          template="_*_+*_*=___"
+          title="Сложение в столбик"
+        />
+      </div>
+      <div className="App">
+        <ColumnArithmeticPuzzle 
+          equation="594-160=434"
+          template="_*_-*_*=___"
+          title="Вычитание в столбик"
+        />
+      </div>
+      <div className="App">
+        <ColumnArithmeticPuzzle 
+          equation="594X160=95040"
+          template="_*_X*_*=_____"
+          title="Умножение в столбик"
+        />
       </div>
     </>
   )
