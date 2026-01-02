@@ -1,0 +1,237 @@
+/* PracticeStats.css */
+
+/* Основной контейнер статистики */
+.practice-stats-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Контейнер для вопросов и таймера */
+.problems-and-timer-container {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 20px;
+}
+
+/* Общие стили для статистических блоков */
+.statistic-container {
+  flex: 1;
+  min-width: 120px;
+}
+
+.statistic-header {
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+}
+
+.text-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.statistic-text {
+  font-size: 14px;
+  line-height: 1.2;
+  color: #666;
+}
+
+.statistic-text.short {
+  display: none;
+  font-size: 12px;
+}
+
+.statistic-content {
+  font-size: 32px;
+  font-weight: 700;
+  color: #2c3e50;
+  text-align: center;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Стили для таймера */
+.practice-timer {
+  display: flex;
+  justify-content: center;
+}
+
+.timer {
+  border-collapse: separate;
+  border-spacing: 4px;
+}
+
+.time-values td {
+  font-size: 24px;
+  font-weight: 600;
+  color: #2c3e50;
+  text-align: center;
+  min-width: 30px;
+  padding: 4px 8px;
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+.time-labels th {
+  font-size: 10px;
+  font-weight: 500;
+  color: #7f8c8d;
+  text-align: center;
+  padding-top: 2px;
+}
+
+/* Стили для SmartScore */
+.smartscore .statistic-content {
+  font-size: 36px;
+  color: #4a90e2;
+}
+
+.subheader-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.statistic-subheader h3 {
+  font-size: 12px;
+  font-weight: 500;
+  color: #7f8c8d;
+  margin: 0;
+}
+
+.help-info-container {
+  position: relative;
+  display: inline-block;
+}
+
+.question-mark-icon {
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.question-mark-icon:hover {
+  transform: scale(1.1);
+}
+
+.tool-tip-content {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 12px;
+  width: 300px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  margin-bottom: 10px;
+}
+
+.tool-tip-text {
+  font-size: 12px;
+  line-height: 1.4;
+  color: #333;
+  margin: 0 0 8px 0;
+}
+
+.tool-tip-text a {
+  color: #4a90e2;
+  text-decoration: none;
+}
+
+.tool-tip-text a:hover {
+  text-decoration: underline;
+}
+
+/* Чекмарк и медаль */
+.checkmark {
+  width: 21px;
+  height: 21px;
+  margin-left: 8px;
+  vertical-align: middle;
+  transition: opacity 0.3s ease;
+}
+
+.gold-medal {
+  width: 40px;
+  height: 40px;
+  margin-top: 10px;
+}
+
+.smartscore-checkmark-tooltip-container {
+  position: absolute;
+  background: #4a90e2;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 10;
+  transition: opacity 0.3s ease;
+}
+
+.check-tooltip {
+  display: block;
+}
+
+/* Ссылка на перерыв */
+.break-link {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.break-link a {
+  font-size: 13px;
+  color: #4a90e2;
+  text-decoration: none;
+}
+
+.break-link a:hover {
+  text-decoration: underline;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .problems-and-timer-container {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .statistic-text:not(.short) {
+    display: none;
+  }
+  
+  .statistic-text.short {
+    display: block;
+  }
+  
+  .statistic-content {
+    font-size: 28px;
+  }
+  
+  .smartscore .statistic-content {
+    font-size: 32px;
+  }
+  
+  .tool-tip-content {
+    width: 250px;
+    left: -120px;
+    transform: none;
+  }
+}

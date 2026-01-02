@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import './IXLMathQuestion.css';
+import './DigitMathQuestion.css';
 
-const IXLMathQuestion = ({ 
+const DigitMathQuestion = ({ 
   numbers = ["23,704", "44,384", "80,460", "6,140"], 
   targetDigit = 4,
   correctIndex = 1  // Индекс правильного ответа в массиве numbers
@@ -154,10 +154,10 @@ const IXLMathQuestion = ({
   }
 
   return (
-    <div className="ixl-container">
-      <div className="ixl-question-component">
+    <div className="digit-container">
+      <div className="digit-question-component">
         <section className="question-and-submission-view">
-          <section className="ixl-practice-crate">
+          <section className="digit-practice-crate">
             <div className="math-section">
               <div className="section-header">
                 {questionData.question}
@@ -296,10 +296,10 @@ const IXLMathQuestion = ({
 };
 
 // Валидация пропсов
-IXLMathQuestion.defaultProps = {
+DigitMathQuestion.defaultProps = {
   numbers: ["23,704", "44,384", "80,460", "6,140"],
   targetDigit: 4,
   correctIndex: 1
 };
 
-export default IXLMathQuestion;
+export default DigitMathQuestion;

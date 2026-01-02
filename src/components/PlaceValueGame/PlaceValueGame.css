@@ -1,0 +1,342 @@
+/* PlaceValueGame.css */
+.place-value-game {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.game-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.game-header h2 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.target-info {
+  font-size: 1.2rem;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  display: inline-block;
+  backdrop-filter: blur(10px);
+}
+
+.target-digit {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ffd700;
+  margin: 0 5px;
+}
+
+.question-section {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+.question-text {
+  font-size: 1.3rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #2c3e50;
+  line-height: 1.5;
+}
+
+.highlight-text {
+  font-weight: bold;
+  color: #e74c3c;
+  font-size: 1.4rem;
+}
+
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  .options-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.option-card {
+  background: white;
+  border: 3px solid #3498db;
+  border-radius: 10px;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100px;
+}
+
+.option-card:hover:not(.selected) {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+  border-color: #2980b9;
+}
+
+.option-card.selected {
+  border-color: #2ecc71;
+  background: linear-gradient(135deg, #d5f4e6 0%, #a3e4d7 100%);
+  box-shadow: 0 5px 20px rgba(46, 204, 113, 0.3);
+}
+
+.option-card.correct {
+  border-color: #2ecc71;
+  background: linear-gradient(135deg, #d5f4e6 0%, #a3e4d7 100%);
+  animation: pulse 1s infinite alternate;
+}
+
+.option-card.incorrect {
+  border-color: #e74c3c;
+  background: linear-gradient(135deg, #fadbd8 0%, #f5b7b1 100%);
+}
+
+@keyframes pulse {
+  from {
+    box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+  }
+  to {
+    box-shadow: 0 0 20px rgba(46, 204, 113, 0.8);
+  }
+}
+
+.number-display {
+  font-family: 'Courier New', monospace;
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.digit {
+  padding: 2px;
+}
+
+.digit.underlined {
+  text-decoration: underline;
+  text-decoration-thickness: 3px;
+  text-decoration-color: #e74c3c;
+  color: #2c3e50;
+}
+
+.comma {
+  color: #7f8c8d;
+  margin: 0 1px;
+}
+
+.value-explanation {
+  font-size: 1rem;
+  color: #27ae60;
+  font-weight: bold;
+  margin-top: 0.5rem;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 0.8rem 1.8rem;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  min-width: 160px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.submit-btn {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+}
+
+.submit-btn:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.new-question-btn {
+  background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+  color: white;
+}
+
+.hint-btn {
+  background: linear-gradient(135deg, #f39c12 0%, #d35400 100%);
+  color: white;
+}
+
+.result-panel {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  animation: slideIn 0.5s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.result-panel.success {
+  border-left: 5px solid #2ecc71;
+  background: linear-gradient(135deg, #d5f4e6 0%, #a3e4d7 100%);
+}
+
+.result-panel.error {
+  border-left: 5px solid #e74c3c;
+  background: linear-gradient(135deg, #fadbd8 0%, #f5b7b1 100%);
+}
+
+.result-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.result-icon {
+  font-size: 2rem;
+  margin-right: 15px;
+}
+
+.result-text {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.solution-explanation {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 2px dashed #bdc3c7;
+}
+
+.solution-explanation h4 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.place-value-table {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1px;
+  background: #ecf0f1;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table-header, .table-row {
+  display: contents;
+}
+
+.table-header > div {
+  background: #34495e;
+  color: white;
+  padding: 1rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.table-row > div {
+  background: white;
+  padding: 0.8rem;
+  text-align: center;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.correct-row > div {
+  background: #d5f4e6;
+  font-weight: bold;
+}
+
+.number-cell {
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+}
+
+.position-cell {
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+.value-cell {
+  color: #27ae60;
+  font-weight: 600;
+}
+
+.instructions {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1.5rem;
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+}
+
+.instructions h3 {
+  margin-bottom: 1rem;
+  color: #ffd700;
+}
+
+.instructions ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.instructions li {
+  margin-bottom: 0.5rem;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.instructions li:before {
+  content: '•';
+  color: #ffd700;
+  position: absolute;
+  left: 0;
+}
+
+.error-message {
+  text-align: center;
+  padding: 3rem;
+  background: #f8d7da;
+  border: 2px solid #f5c6cb;
+  border-radius: 10px;
+  color: #721c24;
+  margin: 2rem auto;
+  max-width: 600px;
+}
