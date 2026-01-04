@@ -33,10 +33,10 @@ const SmartScore = ({ score = 0, showHelp = true }) => {
               {showTooltip && (
                 <section className="tool-tip-content">
                   <p className="tool-tip-text">
-                    IXL's SmartScore is a dynamic measure of progress towards mastery, rather than a percentage grade. 
+                    SmartScore is a dynamic measure of progress towards mastery, rather than a percentage grade. 
                     It tracks your skill level as you tackle progressively more difficult questions. 
                     Consistently answer questions correctly to reach excellence (90), or conquer the Challenge Zone to achieve mastery (100)! 
-                    <a href="https://www.ixl.com/materials/SmartScore_Guide.pdf" target="_blank" rel="noopener noreferrer">Learn more</a>
+                    <a href="https://www.snt.com/materials/SmartScore_Guide.pdf" target="_blank" rel="noopener noreferrer">Learn more</a>
                   </p>
                 </section>
               )}
@@ -72,7 +72,7 @@ const SmartScore = ({ score = 0, showHelp = true }) => {
         </div>
       </section>
       <section className="break-link">
-        <a href="https://www.ixl.com/recommendations/" target="_blank" rel="noopener noreferrer">
+        <a href="https://www.snt.com/recommendations/" target="_blank" rel="noopener noreferrer">
           Need a break?
         </a>
       </section>

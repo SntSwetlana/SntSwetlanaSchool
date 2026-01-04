@@ -1,0 +1,132 @@
+/* Основной контейнер */
+.box-site-nav-func {
+    max-width: 2800px;
+    display: flex;
+    align-items: center; /* Вертикальное центрирование всех дочерних элементов */
+    margin: 0 auto;
+    padding: 0 20px;
+    justify-content: space-between;
+    height: 85px;
+    line-height: normal;
+    position: relative;
+    align-items: center;
+    width: calc(100% - 40px);
+}
+
+/* Логотип - убираем абсолютное позиционирование */
+.site-nav-snt-logo {
+    display: inline-block;
+    font-size: 0;
+    height: 85px;
+    width: 85px;
+    margin: 10px;
+    background: url(./../../assets/logo.svg) 0 0 no-repeat;
+    background-size: 85px 85px;
+    /* Убираем top: 50% и transform */
+    position: relative;
+    top: auto;
+    transform: none;
+}
+
+/* Контейнер для поиска */
+.skill-search-container {
+    display: flex;
+    align-items: center; /* Центрируем по вертикали */
+    position: relative;
+    height: 100%; /* Занимает всю высоту родителя */
+}
+
+/* Поле поиска */
+.box-search-input-btn {
+    display: inline-block;
+    height: 37px;
+    position: relative;
+    border-radius: 5px;
+    padding-left: 12px;
+    border-color: transparent;
+    width: 292px;
+    /* Убираем top: 12px */
+    top: auto;
+    align-self: center; /* Центрируем себя внутри flex-контейнера */
+}
+
+.quick-login-text-input{
+    display: inline-block;
+    height: 37px;
+    border-radius: 3px;
+    border-color: transparent;
+    padding-left: 12px;
+    position: relative;
+    /* Убираем top: 12px */
+    top: auto;
+    align-self: center; /* Центрируем себя внутри flex-контейнера */
+}
+/* Ввод поиска */
+.skill-search-box input[type=search].skill-search-input {
+    border: none;
+    border-bottom: 1px solid #ddd;
+    border-radius: 3px;
+    border-color: transparent;
+    box-shadow: none;
+    box-sizing: border-box;
+    color: #3f3f3f;
+    font-size: 12px;
+    height: 37px;
+    width: 292px;
+    padding: 6px 35px 6px 6px;
+    /* Убираем position: absolute и left: 0 */
+    position: relative;
+}
+.quick-login-button {
+    border-color: #4a90e2;
+    background-color: #4a90e2;
+    color: white;
+    border-radius: 3px;
+    border-color: transparent;
+    line-height: 35px;
+    min-width: 100px;
+    padding: 0 10px;
+    vertical-align: top;
+}
+/* Кнопка поиска */
+.skill-search-box .skill-search-button {
+    background: transparent url(./../../assets/icon-mag-glass.svg) center center no-repeat;
+    background-size: 20px 20px; /* Уменьшаем для лучшего отображения */
+    border: 1px solid transparent;
+    border-radius: 3px;
+    box-sizing: border-box;
+    height: 37px;
+    width: 35px;
+    padding: 0;
+    /* Абсолютное позиционирование относительно .skill-search-container */
+    position: absolute;
+    right: 0;
+    top: 50%; /* Центрируем по вертикали */
+    transform: translateY(-50%); /* Точное центрирование */
+    cursor: pointer;
+}
+.quick-login-checkbox {
+    border: 1px solid #ddd;
+    border-radius: 2px;
+    box-shadow: none;
+    display: inline-block;
+    height: 20px;
+    position: relative;
+    width: 20px;
+}
+/* Правая часть навигации */
+.nav-func-right {
+    display: flex;
+    align-items: center; /* Центрируем по вертикали */
+    height: 100%;
+    margin-left: auto; /* Это прижмет элемент вправо */
+}
+
+/* Форма быстрого входа */
+.quick-login-box {
+    display: flex;
+    align-items: center; /* Центрируем элементы по вертикали */
+    gap: 15px;
+    height: 100%;
+    position: relative;
+}

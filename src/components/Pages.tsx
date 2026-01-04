@@ -7,6 +7,7 @@ import PlaceValueEquation from './PlaceValueEquation/PlaceValueEquation';
 import PlaceValueExpansion from './PlaceValueExpansion/PlaceValueExpansion';
 import PracticeStats from './PracticeStats/PracticeStats';
 import './../App.css';
+import FontViewer from './FontViewer/FontViewer';
 
 // Страница для названий разрядов
 export const PlaceValueNamesPage = () => {
@@ -14,20 +15,23 @@ export const PlaceValueNamesPage = () => {
     <div className="practice-page">
       <div className="page-container">
         <h1>Grade 3 Math - Place Value Names up to Ten Thousands</h1>
-        <div className="ixl-practice-container">
+        <div className="snt-practice-container">
           <PracticeStats />          
         </div>
-        <div className="ixl-practice-container">
+        <div className="snt-practice-container">
           <PlaceValueGame targetNumber={4} />
         </div>
         
-        <div className="ixl-practice-container">
+        <div className="snt-practice-container">
           <PlaceValueGame targetNumber={7} />
         </div>
         
-        <div className="ixl-practice-container">
+        <div className="snt-practice-container">
           <PlaceValueGame targetNumber={2} />
         </div>
+        <div className="snt-practice-container">
+          <FontViewer />
+        </div>         
       </div>
     </div>
   );
@@ -39,7 +43,7 @@ export const ValueOfDigitPage = () => {
     <div className="practice-page">
       <div className="page-container">
         <h1>Grade 3 Math - Value of a Digit up to Ten Thousands</h1>
-        <div className="ixl-practice-container">
+        <div className="snt-practice-container">
           <PracticeStats />          
         </div>
 
@@ -51,7 +55,7 @@ export const ValueOfDigitPage = () => {
           />
         </div>
         
-        <div className="ixl-practice-container">
+        <div className="snt-practice-container">
           <UnderlinedDigitQuestion 
             number="18,084"
             underlinedIndex={3}
@@ -59,14 +63,14 @@ export const ValueOfDigitPage = () => {
           />
         </div>
         
-        <div className="ixl-practice-container">
+        <div className="snt-practice-container">
           <PlaceValueReport 
             number="32,567"
             underlinedIndex={0}
           />
         </div>
         
-        <div className="ixl-practice-container">
+        <div className="snt-practice-container">
           <DigitMathQuestion 
             numbers={["11511", "1151", "11115", "51111"]}
             targetDigit={5}
@@ -84,27 +88,27 @@ export const ConvertToFromNumberPage = () => {
     <div className="practice-page">
       <div className="page-container">
         <h1>Grade 3 Math - Convert to/from a Number</h1>
-        <div className="ixl-practice-container">
+        <div className="snt-practice-container">
           <PracticeStats />          
         </div>
 
-        <div className="ixl-practice-container">
+        <div className="snt-practice-container">
           <PlaceValueEquation correctAnswer={527} />
         </div>
         
-        <div className="ixl-practice-container">
+        <div className="snt-practice-container">
           <PlaceValueExpansion number={32763} />
         </div>
         
-        <div className="ixl-practice-container">
+        <div className="snt-practice-container">
           <PlaceValueEquation correctAnswer={1234} />
         </div>
         
-        <div className="ixl-practice-container">
+        <div className="snt-practice-container">
           <PlaceValueExpansion number={5006} />
         </div>
         
-        <div className="ixl-practice-container">
+        <div className="snt-practice-container">
           <PlaceValueExpansion number={243506} />
         </div>
       </div>

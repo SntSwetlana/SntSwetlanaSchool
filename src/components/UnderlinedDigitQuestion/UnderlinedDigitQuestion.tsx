@@ -82,9 +82,9 @@ const UnderlinedDigitQuestion = ({
   const formattedNumber = formatNumberForDisplay();
 
   return (
-    <div className="ixl-question-container">
+    <div className="snt-question-container">
       <section className="question-and-submission-view fade-in" aria-label="question">
-        <section className="ixl-practice-crate">
+        <section className="snt-practice-crate">
           <input type="hidden" name="randomSeed" value="-6850385953813826295" />
           
           <div className="math-section">

@@ -1,4 +1,4 @@
-/* App.css - обновленный с шириной как в IXL */
+/* App.css - обновленный с шириной как в snt */
 
 /* Базовые сбросы и настройки */
 * {
@@ -30,8 +30,8 @@
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
 
-/* Стиль IXL для упражнений */
-.ixl-practice-container {
+/* Стиль snt для упражнений */
+.snt-practice-container {
   display: flex;
   margin: 0 auto 50px auto;
   max-width: 1280px;
@@ -151,9 +151,12 @@
 
 /* Navigation Styles - навигация */
 .main-nav {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+  /*background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);*/
+  background: linear-gradient(135deg, #276EC7 0%, #144d05 100%);
   color: white;
   padding: 15px 0;
+   min-height: 52px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -165,6 +168,11 @@
   justify-content: space-between;
   align-items: center;
   width: calc(100% - 40px);
+}
+.box-site-nav-func, .box-site-nav-func-left, .box-site-nav-func-right {
+    height: 85px;
+    line-height: normal;
+    position: relative;
 }
 
 .nav-logo {
@@ -217,7 +225,7 @@
 
 /* Responsive Design - адаптивность */
 @media (max-width: 1024px) {
-  .ixl-practice-container,
+  .snt-practice-container,
   .page-container,
   .home-container,
   .nav-container,
@@ -232,7 +240,7 @@
 }
 
 @media (max-width: 768px) {
-  .ixl-practice-container,
+  .snt-practice-container,
   .page-container,
   .home-container,
   .nav-container,
@@ -245,7 +253,7 @@
     padding: 20px 12px;
   }
   
-  .ixl-practice-container {
+  .snt-practice-container {
     margin-bottom: 30px;
     padding: 16px 20px 0 20px;
   }
@@ -291,7 +299,7 @@
 }
 
 @media (max-width: 480px) {
-  .ixl-practice-container,
+  .snt-practice-container,
   .page-container,
   .home-container,
   .nav-container,

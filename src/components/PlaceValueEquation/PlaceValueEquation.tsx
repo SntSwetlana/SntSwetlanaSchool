@@ -116,7 +116,7 @@ const PlaceValueEquation = ({
   const equationParts = parseEquationForDisplay();
 
   return (
-    <div className="ixl-html-crate ixl-html-crate-root">
+    <div className="snt-html-crate snt-html-crate-root">
       <div className="question-container">
         <div className="question-text">
           Type the missing number.

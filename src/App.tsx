@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import './App.css';
 
@@ -8,56 +8,55 @@ import {
   ValueOfDigitPage, 
   ConvertToFromNumberPage 
 } from './components/Pages';
+import SntNavigation from './components/SntNavigation/SntNavigation';
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Замените на реальную логику аутентификации
   return (
     <Router>
       <div className="App">
+          <nav className="main-nav">
         {/* Навигационная панель (опционально) */}
-        <nav className="main-nav">
+        {!isLoggedIn &&  (
+          <SntNavigation  />
+        )}            
           <div className="nav-container">
-            <Link to="/" className="nav-logo">
-              Math Grade 3
-            </Link>
-            <div className="nav-links">
-              <Link to="/math/grade3/place_value_names_up_to_ten_thousands">
-                Place Value Names
+              <Link to="/" className="nav-logo">
+                Math Grade 3
               </Link>
-              <Link to="/math/grade3/value_of_a_digit_up_to_ten_thousands">
-                Value of a Digit
-              </Link>
-              <Link to="/math/grade3/convert_to_from_a_number">
-                Convert Numbers
-              </Link>
-            </div>
+                <div className="nav-links">
+                  <Link to="/math/grade3/place_value_names_up_to_ten_thousands">
+                    Place Value Names
+                  </Link>
+                  <Link to="/math/grade3/value_of_a_digit_up_to_ten_thousands">
+                    Value of a Digit
+                  </Link>
+                  <Link to="/math/grade3/convert_to_from_a_number">
+                    Convert Numbers
+                  </Link>
+                </div>
+              </div>
+          </nav>
+          <Routes>
+              <Route path="/" element={<HomePage />} />
+                <Route
+                  path="/math/grade3/place_value_names_up_to_ten_thousands"
+                  element={<PlaceValueNamesPage />} />
+                <Route
+                  path="/math/grade3/value_of_a_digit_up_to_ten_thousands"
+                  element={<ValueOfDigitPage />} />
+                <Route
+                  path="/math/grade3/convert_to_from_a_number"
+                  element={<ConvertToFromNumberPage />} />
+          </Routes>
+          {/* Футер (опционально) */}
+            <footer className="main-footer">
+              <div className="footer-container">
+                <p>© 2024 Grade 3 Math Practice. Educational materials for learning place value.</p>
+              </div>
+            </footer>
           </div>
-        </nav>
-
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route 
-            path="/math/grade3/place_value_names_up_to_ten_thousands" 
-            element={<PlaceValueNamesPage />} 
-          />
-          <Route 
-            path="/math/grade3/value_of_a_digit_up_to_ten_thousands" 
-            element={<ValueOfDigitPage />} 
-          />
-          <Route 
-            path="/math/grade3/convert_to_from_a_number" 
-            element={<ConvertToFromNumberPage />} 
-          />
-        </Routes>
-
-        {/* Футер (опционально) */}
-        <footer className="main-footer">
-          <div className="footer-container">
-            <p>© 2024 Grade 3 Math Practice. Educational materials for learning place value.</p>
-          </div>
-        </footer>
-      </div>
-    </Router>
+        </Router>
   );
 }
-
 export default App;
