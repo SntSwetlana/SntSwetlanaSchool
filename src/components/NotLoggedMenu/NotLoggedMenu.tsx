@@ -1,9 +1,47 @@
-import React from 'react';
-import './SntNavigation.css';
+import React, { useState } from 'react';
+import './NotLoggedMenu.css';
 import { Link } from 'react-router-dom';
+type LoginResp = { ok: boolean; roles?: string[]; reason?: string };
 
-const SntNavigation = () => {
-  return (
+type Props = {
+  onLoginSuccess: (roles: string[]) => void;
+};
+
+const NotLoggedMenu: React.FC<Props> = ({ onLoginSuccess }) => {
+ const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    try {
+      console.log('Submitting login for', username);
+      console.log('Submitting password for', password);
+      const res = await fetch('http://localhost:3000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = (await res.json()) as LoginResp;
+
+      if (!res.ok || !data.ok) {
+        setError(data.reason ?? 'invalid_credentials');
+        return;
+      }
+
+      onLoginSuccess(data.roles ?? []);
+    } catch {
+      setError('network_error');
+    } finally {
+      setLoading(false);
+    }
+  }  return (
     <div className="box-site-nav-func">
       <Link to="/" className="site-nav-snt-logo site-nav-snt-logo-link" aria-label="SNT Learning Home">
       </Link>
@@ -20,7 +58,7 @@ const SntNavigation = () => {
           className="box-search-input-btn" 
           type="search" 
           autoComplete="off" 
-          maxLength="200" 
+          maxLength={200} 
           name="q" 
           placeholder="Search topics, skills, and more" 
           aria-label="Search topics, skills, and more" 
@@ -41,9 +79,7 @@ const SntNavigation = () => {
         <form 
           className="quick-login-box" 
           id="quickLogin" 
-          data-cy="quick-login-form" 
-          action="/signin" 
-          method="post"
+          onSubmit={onSubmit}
         >
           <input 
             aria-label="Username" 
@@ -55,7 +91,8 @@ const SntNavigation = () => {
             name="username" 
             placeholder="Username" 
             type="text" 
-            value=""
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
           <input 
             aria-label="Password" 
@@ -67,17 +104,16 @@ const SntNavigation = () => {
             name="password" 
             placeholder="Password" 
             type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
           <button 
             aria-label="Sign in" 
             className="quick-login-button" 
-            id="qlsubmit" 
-            name="qlsubmit" 
             type="submit" 
-            value="true" 
-            data-cy="qlsubmit"
+            disabled={loading}
           >
-          Sign in
+          {loading ? 'Signing in...' : 'Sign in'}
           </button>
           <input 
             autoComplete="off" 
@@ -90,6 +126,12 @@ const SntNavigation = () => {
           <label htmlFor="quick-login-remember" className="quick-login-label">
             Remember
           </label>
+          {error && (
+            <div style={{ marginLeft: 12, fontSize: 12 }}>
+              {error}
+            </div>
+          )}
+
         </form>
       </div>
         
@@ -108,4 +150,4 @@ const SntNavigation = () => {
   );
 };
 
-export default SntNavigation;
+export default NotLoggedMenu;

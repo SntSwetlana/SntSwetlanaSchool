@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import './App.css';
 
@@ -8,17 +8,50 @@ import {
   ValueOfDigitPage, 
   ConvertToFromNumberPage 
 } from './components/Pages';
-import SntNavigation from './components/SntNavigation/SntNavigation';
+import NotLoggedMenu from './components/NotLoggedMenu/NotLoggedMenu';
+import LoggedMenu from './components/LoggedMenu/LoggedMenu';
+type MeResp = { ok: boolean; roles?: string[] };
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Замените на реальную логику аутентификации
+  const [roles, setRoles] = useState<string[]>([]);
+
+  // 1) при старте проверяем сессию
+  useEffect(() => {
+    fetch('http://localhost:3000/api/auth/me', {
+      credentials: 'include',
+    })
+      .then(async (r) => (r.ok ? (await r.json()) as MeResp : null))
+      .then((data) => {
+        if (data?.ok) {
+          setIsLoggedIn(true);
+          setRoles(data.roles ?? []);
+        } else {
+          setIsLoggedIn(false);
+          setRoles([]);
+        }
+      })
+      .catch(() => {
+        setIsLoggedIn(false);
+        setRoles([]);
+      });
+  }, []);
+
+  const handleLoginSuccess = (newRoles: string[]) => {
+    setIsLoggedIn(true);
+    setRoles(newRoles);
+  };
+
   return (
     <Router>
       <div className="App">
           <nav className="main-nav">
         {/* Навигационная панель (опционально) */}
         {!isLoggedIn &&  (
-          <SntNavigation  />
+          <NotLoggedMenu onLoginSuccess={handleLoginSuccess} />
+        )}            
+        {isLoggedIn &&  (
+          <LoggedMenu onLoginSuccess={handleLoginSuccess} />
         )}            
           <div className="nav-container">
               <Link to="/" className="nav-logo">

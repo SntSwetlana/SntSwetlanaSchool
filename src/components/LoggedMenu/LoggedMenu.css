@@ -1,0 +1,343 @@
+/* LoggedMenu.css */
+
+/* Основной контейнер правой части */
+.consolidated-rhs-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  position: relative;
+  flex: 1;
+}
+
+/* Контейнер поиска */
+.search-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+/* Форма поиска */
+.search-form {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 24px;
+  padding: 6px 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  animation: slideIn 0.3s ease;
+  position: absolute;
+  right: 40px;
+  z-index: 100;
+  min-width: 300px;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Поле ввода поиска */
+.search-input {
+  border: none;
+  outline: none;
+  padding: 8px 12px;
+  font-size: 14px;
+  flex: 1;
+  min-width: 250px;
+  background: transparent;
+}
+
+.search-input::placeholder {
+  color: #999;
+}
+
+/* Кнопка отправки поиска */
+.search-submit-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-submit-btn .search-icon {
+  width: 20px;
+  height: 20px;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.search-submit-btn:hover .search-icon {
+  opacity: 1;
+}
+
+/* Кнопка переключения поиска */
+.search-toggle-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+  z-index: 101;
+  position: relative;
+}
+
+.search-toggle-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.search-toggle-btn .search-toggle-icon {
+  width: 22px;
+  height: 22px;
+  filter: brightness(0) invert(1);
+}
+
+/* Контейнер меню пользователя */
+.user-menu-container {
+  position: relative;
+}
+
+/* Кнопка пользователя */
+.user-nav-wrapper.icon-and-name-button {
+  background-clip: padding-box;
+  background-color: #7cda2e;
+  border: 2px solid transparent;
+  border-radius: 30px;
+  padding: 5px 15px 5px 5px;
+  position: relative;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  min-width: 120px;
+}
+
+.user-nav-wrapper.icon-and-name-button:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  background-color: #6bc824;
+}
+
+/* Контейнер аватара */
+.user-avatar-container {
+  background-color: #fff;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* Аватар пользователя */
+.user-avatar {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+/* Имя пользователя */
+.display-name {
+  color: #fff;
+  font: 14px 'Roboto Slab', sans-serif;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  text-align: left;
+}
+
+/* Стрелочка выпадающего меню */
+.dropdown-arrow {
+  color: #fff;
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+/* Выпадающее меню пользователя */
+.user-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  min-width: 240px;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+  overflow: hidden;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Шапка выпадающего меню */
+.dropdown-header {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  background: #f8f9fa;
+  gap: 12px;
+}
+
+.dropdown-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 2px solid #7cda2e;
+}
+
+.dropdown-user-avatar {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.dropdown-user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown-user-name {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+.dropdown-user-email {
+  color: #666;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+/* Разделитель */
+.dropdown-divider {
+  height: 1px;
+  background: #e9ecef;
+  margin: 4px 0;
+}
+
+/* Элементы меню */
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.2s;
+  gap: 12px;
+}
+
+.dropdown-item:hover {
+  background-color: #f8f9fa;
+}
+
+.dropdown-item-icon {
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+}
+
+.dropdown-item-text {
+  color: #333;
+  font-size: 14px;
+  flex: 1;
+}
+
+/* Кнопка выхода */
+.logout-item {
+  color: #dc3545;
+}
+
+.logout-item .dropdown-item-text {
+  color: #dc3545;
+}
+
+.logout-item:hover {
+  background-color: #ffe6e6;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .search-form {
+    min-width: 250px;
+    right: 45px;
+  }
+  
+  .search-input {
+    min-width: 200px;
+  }
+  
+  .display-name {
+    display: none;
+  }
+  
+  .user-nav-wrapper.icon-and-name-button {
+    min-width: auto;
+    padding: 5px;
+    width: 44px;
+    justify-content: center;
+  }
+  
+  .dropdown-arrow {
+    display: none;
+  }
+  
+  .user-dropdown-menu {
+    position: fixed;
+    top: 60px;
+    right: 10px;
+    left: 10px;
+    width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-form {
+    min-width: 200px;
+  }
+  
+  .search-input {
+    min-width: 150px;
+    font-size: 13px;
+  }
+  
+  .user-dropdown-menu {
+    min-width: 200px;
+  }
+}
