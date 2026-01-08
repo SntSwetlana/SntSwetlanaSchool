@@ -1,20 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './../PracticeStats/PracticeStats.css';
 
-const TimeElapsed = ({ isActive = true }) => {
+interface TimeElapsedProps {
+  isActive?: boolean;
+}
+
+const TimeElapsed = ({ isActive = true }: TimeElapsedProps) => {
   const [time, setTime] = useState(0); // время в секундах
 
   useEffect(() => {
-    let interval;
+    let interval: number | null = null;
+    
     if (isActive) {
       interval = setInterval(() => {
         setTime(prev => prev + 1);
       }, 1000);
     }
-    return () => clearInterval(interval);
+    
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
   }, [isActive]);
 
-  const formatTime = (totalSeconds) => {
+  const formatTime = (totalSeconds: number) => {
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;

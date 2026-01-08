@@ -1,4 +1,3 @@
-import React from 'react';
 import './PlaceValueReport.css';
 
 const PlaceValueReport = ({ 
@@ -152,7 +151,7 @@ const PlaceValueReport = ({
 };
 
 // Вспомогательная функция для получения названия позиции по индексу
-const getPositionNameForIndex = (positionFromRight) => {
+const getPositionNameForIndex = (positionFromRight: number) => {
   switch (positionFromRight) {
     case 0: return 'ones';
     case 1: return 'tens';

@@ -1,15 +1,39 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './DigitMathQuestion.css';
 
-const DigitMathQuestion = ({ 
+interface DigitMathQuestionProps {
+  numbers?: string[];
+  targetDigit?: number;
+  correctIndex?: number;
+}
+
+interface OptionData {
+  id: number;
+  value: string;
+  beforeDigit: string;
+  afterDigit: string;
+  position: number;
+  positionName: string;
+  worth: number;
+  formattedWorth: string;
+  isCorrect: boolean;
+}
+
+interface QuestionData {
+  question: string;
+  options: OptionData[];
+  correctAnswerId: number;
+}
+
+const DigitMathQuestion: React.FC<DigitMathQuestionProps> = ({ 
   numbers = ["23,704", "44,384", "80,460", "6,140"], 
   targetDigit = 4,
   correctIndex = 1  // Индекс правильного ответа в массиве numbers
 }) => {
-  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
-  const [questionData, setQuestionData] = useState(null);
+  const [questionData, setQuestionData] = useState<QuestionData | null>(null);
   const [error, setError] = useState('');
 
   // Валидация и подготовка данных
@@ -90,12 +114,16 @@ const DigitMathQuestion = ({
       });
 
       setError('');
-    } catch (err) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Произошла неизвестная ошибка');
+      }
     }
   }, [numbers, targetDigit, correctIndex]);
 
-  const handleSelect = (id) => {
+  const handleSelect = (id: number) => {
     if (!isSubmitted && questionData) {
       setSelectedAnswer(id);
     }
@@ -118,7 +146,7 @@ const DigitMathQuestion = ({
     setShowFeedback(false);
   };
 
-  const handleKeyDown = (e, id) => {
+  const handleKeyDown = (e: React.KeyboardEvent, id: number) => {
     if ((e.key === 'Enter' || e.key === ' ') && questionData) {
       e.preventDefault();
       if (!isSubmitted) {
@@ -127,7 +155,7 @@ const DigitMathQuestion = ({
     }
   };
 
-  const renderNumber = (option) => {
+  const renderNumber = (option: OptionData) => {
     if (!option) return null;
     
     return (
@@ -296,10 +324,10 @@ const DigitMathQuestion = ({
 };
 
 // Валидация пропсов
-DigitMathQuestion.defaultProps = {
-  numbers: ["23,704", "44,384", "80,460", "6,140"],
-  targetDigit: 4,
-  correctIndex: 1
-};
+//DigitMathQuestion.defaultProps = {
+//  numbers: ["23,704", "44,384", "80,460", "6,140"],
+//  targetDigit: 4,
+//  correctIndex: 1
+// };
 
 export default DigitMathQuestion;

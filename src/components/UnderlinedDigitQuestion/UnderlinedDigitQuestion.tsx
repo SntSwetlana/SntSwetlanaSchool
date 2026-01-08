@@ -1,10 +1,21 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './UnderlinedDigitQuestion.css';
 
-const UnderlinedDigitQuestion = ({ 
+interface UnderlinedDigitQuestionProps {
+  number?: string;
+  underlinedIndex?: number;
+  correctAnswer?: number | null;
+}
+
+interface FormattedPart {
+  type: 'digit' | 'comma';
+  value: string;
+  isUnderlined?: boolean;
+}
+
+const UnderlinedDigitQuestion: React.FC<UnderlinedDigitQuestionProps> = ({ 
   number = "18,084",
-  underlinedIndex = 2, // Индекс подчеркнутой цифры (0-based, считая слева без запятых)
-  correctAnswer = 80
+  underlinedIndex = 2 // Индекс подчеркнутой цифры (0-based, считая слева без запятых)
 }) => {
   const [userAnswer, setUserAnswer] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -22,7 +33,7 @@ const UnderlinedDigitQuestion = ({
 
   const actualCorrectAnswer = calculateDigitValue();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (userAnswer.trim() !== '') {
       setIsSubmitted(true);
@@ -40,22 +51,22 @@ const UnderlinedDigitQuestion = ({
     setShowFeedback(false);
   };
 
-  const handleKeyPress = (e) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     // Разрешаем только цифры и Backspace
     if (!/[0-9]|Backspace|Delete|ArrowLeft|ArrowRight|Tab/.test(e.key)) {
       e.preventDefault();
     }
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Убираем все нецифровые символы
     const value = e.target.value.replace(/\D/g, '');
     setUserAnswer(value);
   };
 
-  const formatNumberForDisplay = () => {
+  const formatNumberForDisplay = (): FormattedPart[] => {
     // Разбиваем число на части для отображения с подчеркиванием
-    const parts = [];
+    const parts: FormattedPart[] = [];
     let currentIndex = 0;
     
     for (let i = 0; i < number.length; i++) {
@@ -229,7 +240,7 @@ const UnderlinedDigitQuestion = ({
 };
 
 // Вспомогательная функция для получения названия позиции
-const getPositionName = (index, length) => {
+const getPositionName = (index: number, length: number): string => {
   const positionsFromRight = length - 1 - index;
   
   switch (positionsFromRight) {
@@ -242,13 +253,6 @@ const getPositionName = (index, length) => {
     case 6: return 'millions';
     default: return `10^${positionsFromRight}`;
   }
-};
-
-// Валидация пропсов
-UnderlinedDigitQuestion.defaultProps = {
-  number: "18,084",
-  underlinedIndex: 2,
-  correctAnswer: null // Если не указан, будет вычислен автоматически
 };
 
 export default UnderlinedDigitQuestion;

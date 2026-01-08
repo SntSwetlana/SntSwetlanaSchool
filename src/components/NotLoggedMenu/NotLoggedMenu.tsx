@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
 import './NotLoggedMenu.css';
 import { Link } from 'react-router-dom';
-type LoginResp = { ok: boolean; roles?: string[]; reason?: string };
+type LoginResp = { 
+  ok: boolean; 
+  roles?: string[]; 
+  username?: string;
+  gender?: 'male' | 'female';
+  reason?: string 
+};
 
 type Props = {
   onLoginSuccess: (roles: string[]) => void;
@@ -31,8 +37,18 @@ const NotLoggedMenu: React.FC<Props> = ({ onLoginSuccess }) => {
       const data = (await res.json()) as LoginResp;
 
       if (!res.ok || !data.ok) {
-        setError(data.reason ?? 'invalid_credentials');
+        setError(data.reason ?? 'Invalid username or password');
         return;
+      }
+      
+      if (data.username) {
+        sessionStorage.setItem('username', data.username);
+      }
+      if (data.gender) {
+        sessionStorage.setItem('gender', data.gender);
+      }
+      if (data.roles) {
+        sessionStorage.setItem('userRoles', JSON.stringify(data.roles));
       }
 
       onLoginSuccess(data.roles ?? []);
@@ -63,7 +79,6 @@ const NotLoggedMenu: React.FC<Props> = ({ onLoginSuccess }) => {
           placeholder="Search topics, skills, and more" 
           aria-label="Search topics, skills, and more" 
           data-cy="search-input" 
-          value=""
         />
         <button 
           className="skill-search-button site-nav-header-button"
@@ -93,6 +108,7 @@ const NotLoggedMenu: React.FC<Props> = ({ onLoginSuccess }) => {
             type="text" 
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            required
           />
           <input 
             aria-label="Password" 
@@ -106,6 +122,7 @@ const NotLoggedMenu: React.FC<Props> = ({ onLoginSuccess }) => {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
           <button 
             aria-label="Sign in" 
@@ -127,10 +144,15 @@ const NotLoggedMenu: React.FC<Props> = ({ onLoginSuccess }) => {
             Remember
           </label>
           {error && (
-            <div style={{ marginLeft: 12, fontSize: 12 }}>
+              <div className="login-error" style={{ 
+              marginLeft: 12, 
+              fontSize: 12,
+              color: '#dc3545',
+              marginTop: 8
+            }}>
               {error}
             </div>
-          )}
+         )}
 
         </form>
       </div>

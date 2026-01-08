@@ -1,24 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import './PlaceValueEquation.css';
+interface PlaceValueEquationProps {
+  correctAnswer?: number;
+}
 
-const PlaceValueEquation = ({
+interface PlaceValueItem {
+  digit: number;
+  placeName: string;
+  value: number;
+}
+
+interface EquationPart {
+  number: string;
+  unit: string;
+  isLast: boolean;
+}
+const PlaceValueEquation : React.FC<PlaceValueEquationProps> = ({
   correctAnswer = 384
 }) => {
   const [userAnswer, setUserAnswer] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
   const [equationText, setEquationText] = useState('');
-  const [placeValues, setPlaceValues] = useState([]);
+  const [placeValues, setPlaceValues] = useState<PlaceValueItem[]>([]);
 
   // Генерируем текст уравнения из correctAnswer
   useEffect(() => {
     generateEquation(correctAnswer);
   }, [correctAnswer]);
 
-  const generateEquation = (number) => {
+  const generateEquation = (number: number) => {
     const numStr = number.toString();
-    const values = [];
-    let equationParts = [];
+    const values: PlaceValueItem[] = [];
+    const equationParts: string[] = [];
     
     // Обрабатываем цифры справа налево
     for (let i = 0 ; i <= numStr.length - 1; i++) {
@@ -26,7 +40,7 @@ const PlaceValueEquation = ({
       if (digit === 0) continue; // Пропускаем нули
       
       let placeName = '';
-      let multiplier = Math.pow(10, i);
+      const multiplier = Math.pow(10, i);
       
       switch (i) {
         case 0:
@@ -65,7 +79,7 @@ const PlaceValueEquation = ({
     setEquationText(equationParts.join(' + '));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (userAnswer.trim() !== '') {
       setIsSubmitted(true);
@@ -83,21 +97,21 @@ const PlaceValueEquation = ({
     setShowFeedback(false);
   };
 
-  const handleKeyPress = (e) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     // Разрешаем только цифры и Backspace
     if (!/[0-9]|Backspace|Delete|ArrowLeft|ArrowRight|Tab/.test(e.key)) {
       e.preventDefault();
     }
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Убираем все нецифровые символы
     const value = e.target.value.replace(/\D/g, '');
     setUserAnswer(value);
   };
 
   // Парсим уравнение для отображения
-  const parseEquationForDisplay = () => {
+  const parseEquationForDisplay = (): EquationPart[] => {
     const parts = equationText.split('+').map(part => part.trim());
     
     return parts.map((part, index) => {
@@ -110,7 +124,7 @@ const PlaceValueEquation = ({
         };
       }
       return null;
-    }).filter(Boolean);
+    }).filter((part): part is EquationPart => part !== null);
   };
 
   const equationParts = parseEquationForDisplay();
@@ -256,7 +270,7 @@ export const RandomPlaceValueEquation = () => {
     // Генерируем число от 100 до 9999 для разнообразия
     const min = 100;
     const max = 9999;
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+    return Math.floor( Math.random() * (max - min + 1)) + min;
   };
 
   const [randomNumber, setRandomNumber] = useState(generateRandomNumber());

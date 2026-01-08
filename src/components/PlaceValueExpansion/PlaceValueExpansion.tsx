@@ -1,18 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import './PlaceValueExpansion.css';
+interface PlaceValueExpansionProps {
+  number?: number;
+  showHints?: boolean;
+}
 
-const PlaceValueExpansion = ({
+interface DigitInfo {
+  digit: number;
+  position: number;
+  value: number;
+}
+
+interface PlaceInfo {
+  key: string;
+  position: number;
+  name: string;
+  multiplier: number;
+}
+
+interface Answers {
+  [key: string]: string;
+}
+interface CorrectDigits {
+  [key: string]: number;
+}
+
+
+const PlaceValueExpansion: React.FC<PlaceValueExpansionProps> = ({
   number = 323,
   showHints = true
 }) => {
-  const [answers, setAnswers] = useState({});
+  const [answers, setAnswers] = useState<Answers>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
-  const [numberDigits, setNumberDigits] = useState([]);
-  const [placeFields, setPlaceFields] = useState([]);
-
+  const [numberDigits, setNumberDigits] = useState<DigitInfo[]>([]);
+  const [placeFields, setPlaceFields] = useState<PlaceInfo[]>([]);
   // Определяем все возможные разряды с их названиями
-  const allPlaces = [
+  const allPlaces: PlaceInfo[] = [
     { key: 'hundred_thousands', position: 5, name: 'hundred thousands', multiplier: 100000 },
     { key: 'ten_thousands', position: 4, name: 'ten thousands', multiplier: 10000 },
     { key: 'thousands', position: 3, name: 'thousands', multiplier: 1000 },
@@ -50,7 +74,7 @@ const PlaceValueExpansion = ({
     }
     
     // Убираем undefined и сортируем по позиции
-    const sortedDigits = digits.filter(d => d !== undefined).sort((a, b) => b.position - a.position);
+    const sortedDigits = digits.filter((d): d is DigitInfo => d !== undefined).sort((a, b) => b.position - a.position);
     setNumberDigits(sortedDigits);
     
     // Определяем какие поля показывать (только до самой старшей ненулевой цифры)
@@ -58,7 +82,7 @@ const PlaceValueExpansion = ({
     const activePlaces = allPlaces.filter(place => place.position <= maxPosition);
     
     // Создаем начальные значения ответов (все нули по умолчанию)
-    const initialAnswers = {};
+    const initialAnswers : Answers = {};
     activePlaces.forEach(place => {
       const digit = sortedDigits.find(d => d.position === place.position)?.digit || 0;
       initialAnswers[place.key] = digit === 0 ? '0' : ''; // Для нулей ставим '0', остальные пустые
@@ -70,7 +94,7 @@ const PlaceValueExpansion = ({
     setShowFeedback(false);
   }, [number]);
 
-  const handleInputChange = (placeKey) => (e) => {
+  const handleInputChange = (placeKey: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, '').slice(0, 1); // Только 1 цифра
     setAnswers(prev => ({
       ...prev,
@@ -78,7 +102,7 @@ const PlaceValueExpansion = ({
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     // Проверяем, что все поля заполнены
@@ -95,7 +119,7 @@ const PlaceValueExpansion = ({
   };
 
   const handleReset = () => {
-    const initialAnswers = {};
+    const initialAnswers : Answers = {};
     placeFields.forEach(place => {
       const digit = numberDigits.find(d => d.position === place.position)?.digit || 0;
       initialAnswers[place.key] = digit === 0 ? '0' : '';
@@ -106,10 +130,10 @@ const PlaceValueExpansion = ({
     setShowFeedback(false);
   };
 
-  const handleKeyPress = (e, nextField) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>, nextField: string | null) => {
     // Разрешаем только цифры
     if (/[0-9]/.test(e.key)) {
-      if (nextField && e.target.value.length >= 0) {
+      if (nextField && e.currentTarget.value.length >= 0) {
         // Автоматический переход к следующему полю
         setTimeout(() => {
           document.getElementById(nextField)?.focus();
@@ -122,13 +146,13 @@ const PlaceValueExpansion = ({
   const isCorrect = () => {
     return placeFields.every(field => {
       const correctDigit = numberDigits.find(d => d.position === field.position)?.digit || 0;
-      return parseInt(answers[field.key] || 0) === correctDigit;
+      return parseInt(answers[field.key] || '0') === correctDigit;
     });
   };
 
   // Получаем правильные цифры для всех активных полей
-  const getCorrectDigits = () => {
-    const correctDigits = {};
+  const getCorrectDigits = (): CorrectDigits  => {
+    const correctDigits: CorrectDigits  = {};
     placeFields.forEach(field => {
       correctDigits[field.key] = numberDigits.find(d => d.position === field.position)?.digit || 0;
     });
@@ -145,16 +169,8 @@ const PlaceValueExpansion = ({
     }).join(' + ');
   };
 
-  // Формируем текст ответа пользователя
-  const getUserAnswerText = () => {
-    return placeFields.map(field => {
-      const digit = answers[field.key] || '0';
-      return `${digit} ${field.name}`;
-    }).join(' + ');
-  };
-
   // Получаем следующий field для перехода
-  const getNextFieldId = (currentIndex) => {
+  const getNextFieldId = (currentIndex: number) => {
     if (currentIndex < placeFields.length - 1) {
       return `${placeFields[currentIndex + 1].key}-input`;
     }
@@ -181,14 +197,14 @@ const PlaceValueExpansion = ({
                       id={`${field.key}-input`}
                       type="text"
                       className={`fillIn expansion-input ${isSubmitted ? (
-                        parseInt(answers[field.key] || 0) === correctDigits[field.key] ? 'correct' : 'incorrect'
+                        parseInt(answers[field.key] || '0') === correctDigits[field.key] ? 'correct' : 'incorrect'
                       ) : ''}`}
                       spellCheck="false"
                       value={answers[field.key] || ''}
                       onChange={handleInputChange(field.key)}
                       onKeyPress={(e) => handleKeyPress(e, getNextFieldId(index))}
                       disabled={isSubmitted}
-                      maxLength="1"
+                      maxLength={1}
                       style={{ width: '30px' }}
                       aria-label={`${field.name} digit`}
                       placeholder={correctDigits[field.key] === 0 ? "0" : ""}
@@ -265,9 +281,9 @@ const PlaceValueExpansion = ({
             <div className="breakdown-visual">
               <div className="number-visualization">
                 <div className="number-digits">
-                  {placeFields.map((field, index) => {
+                  {placeFields.map((field) => {
                     const digit = numberDigits.find(d => d.position === field.position)?.digit || 0;
-                    const userDigit = parseInt(answers[field.key] || 0);
+                    const userDigit = parseInt(answers[field.key] || '0');
                     
                     return (
                       <div key={field.key} className="digit-column">
@@ -292,7 +308,7 @@ const PlaceValueExpansion = ({
               <div className="verification-steps">
                 {placeFields.map((field, index) => {
                   const correctDigit = numberDigits.find(d => d.position === field.position)?.digit || 0;
-                  const userDigit = parseInt(answers[field.key] || 0);
+                  const userDigit = parseInt(answers[field.key] || '0');
                   const userValue = userDigit * field.multiplier;
                   const correctValue = correctDigit * field.multiplier;
                   
@@ -315,11 +331,11 @@ const PlaceValueExpansion = ({
                   <span className="step-number">→</span>
                   <span className="step-text">
                     Total: {placeFields.map(field => {
-                      const userDigit = parseInt(answers[field.key] || 0);
+                      const userDigit = parseInt(answers[field.key] || '0');
                       return `${userDigit} × ${field.multiplier.toLocaleString()}`;
                     }).join(' + ')} = {
                       placeFields.reduce((sum, field) => {
-                        const userDigit = parseInt(answers[field.key] || 0);
+                        const userDigit = parseInt(answers[field.key] || '0');
                         return sum + (userDigit * field.multiplier);
                       }, 0).toLocaleString()
                     }

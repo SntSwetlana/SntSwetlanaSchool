@@ -4,8 +4,7 @@ import girlFace from './../../assets/girl-face.svg';
 import searchIcon from './../../assets/icon-mag-glass.svg';
 import './LoggedMenu.css';
 
-import { Link } from 'react-router-dom';
-type LoginResp = { ok: boolean; roles?: string[]; reason?: string };
+import { Link, useNavigate } from 'react-router-dom';
 
 type Props = {
   userAvatarType: 'boy' | 'girl'; // Тип аватара пользователя
@@ -27,8 +26,10 @@ const LoggedMenu: React.FC<Props> = ({
   const [searchExpanded, setSearchExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   // Обработчик клика для закрытия меню при клике вне его
   useEffect(() => {
@@ -61,11 +62,59 @@ const LoggedMenu: React.FC<Props> = ({
       setSearchQuery('');
     }
   };
+  // Логика логаута для HttpOnly cookies
+  const handleLogout = async () => {
+    if (isLoggingOut) return;
 
+    setIsLoggingOut(true);
+    setUserMenuOpen(false);
+
+    try {
+      // Вызываем API для логаута
+      const response = await fetch('http://localhost:3000/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include', // Важно для HttpOnly cookies
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        // Очищаем sessionStorage
+        sessionStorage.clear();
+        
+        // Вызываем callback
+        onLogoutClick();
+        
+        // Перенаправляем на главную или страницу логина
+        navigate('/');
+      } else {
+        console.error('Logout failed');
+        // В случае ошибки все равно перенаправляем
+        sessionStorage.clear();
+        onLogoutClick();
+        navigate('/');
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+      // При ошибке сети очищаем локальные данные
+      sessionStorage.clear();
+      onLogoutClick();
+      navigate('/');
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
   // Получаем путь к аватару в зависимости от типа
   const getAvatarPath = () => {
     return userAvatarType === 'boy' ? boyFace : girlFace;
   };
+
+  const getUserEmail = () => {
+    const email = sessionStorage.getItem('userEmail');
+    return email || `${userName.toLowerCase()}@example.com`;
+  };
+
 
   return (
         <div className="box-site-nav-func">
@@ -148,7 +197,7 @@ const LoggedMenu: React.FC<Props> = ({
               </div>
               <div className="dropdown-user-info">
                 <span className="dropdown-user-name">{userName}</span>
-                <span className="dropdown-user-email">{userName.toLowerCase()}@example.com</span>
+                <span className="dropdown-user-email">{getUserEmail()}</span>
               </div>
             </div>
             
@@ -180,13 +229,11 @@ const LoggedMenu: React.FC<Props> = ({
             
             <button
               className="dropdown-item logout-item"
-              onClick={() => {
-                onLogoutClick();
-                setUserMenuOpen(false);
-              }}
+                onClick={handleLogout}
+                disabled={isLoggingOut}
             >
-              <span className="dropdown-item-icon">🚪</span>
-              <span className="dropdown-item-text">Log Out</span>
+              <span className="dropdown-item-icon"> {isLoggingOut ? '⏳' : '🚪'}</span>
+              <span className="dropdown-item-text">{isLoggingOut ? 'Logging out...' : 'Log Out'}</span>
             </button>
           </div>
         )}

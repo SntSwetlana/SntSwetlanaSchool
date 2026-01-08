@@ -1,20 +1,43 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './ArithmeticPuzzle.css';
 
-const ArithmeticPuzzle = ({ 
+interface ArithmeticPuzzleProps {
+  equation?: string;
+  template?: string;
+  title?: string;
+  showHint?: boolean;
+}
+
+interface ParsedEquation {
+  firstNumber: string;
+  secondNumber: string;
+  operator: string;
+  result: string;
+}
+
+interface StructureItem {
+  type: 'input' | 'display';
+  index?: number;
+  correctValue?: string;
+  position?: number;
+  value?: string;
+}
+
+const ArithmeticPuzzle: React.FC<ArithmeticPuzzleProps> = ({ 
   equation = "594+160=754", 
   template = "__*+*_*=___",
   title = "Заполните пропущенные цифры",
   showHint = true
 }) => {
   // Разбираем уравнение на части
-  const parseEquation = (eq) => {
+
+  const parseEquation = (eq:string): ParsedEquation => {
     // Ищем знак равенства
     const [leftSide, rightSide] = eq.split('=');
     
     // Ищем знак операции в левой части
     let operator = '';
-    let numbers = [];
+    let numbers: string[] = [];
     
     if (leftSide.includes('+')) {
       operator = '+';
@@ -49,10 +72,10 @@ const ArithmeticPuzzle = ({
     
     let currentPos = 0;
     let inputsCount = 0;
-    const structure = [];
+    const structure: StructureItem[] = [];
     
     // Функция для создания элемента
-    const createElement = (char, type, value = '') => {
+    const createElement = (char: string, type: 'input' | 'display', value = ''): StructureItem => {
       if (type === 'input') {
         const index = inputsCount;
         inputsCount++;
@@ -137,7 +160,7 @@ const ArithmeticPuzzle = ({
 
   const { structure, correctAnswers, inputsCount } = createPuzzleStructure();
   
-  const [inputs, setInputs] = useState(Array(inputsCount).fill(''));
+  const [inputs, setInputs] = useState<string[]>(Array(inputsCount).fill(''));
   const [feedback, setFeedback] = useState(Array(inputsCount).fill(''));
   const [isComplete, setIsComplete] = useState(false);
 
@@ -147,7 +170,7 @@ const ArithmeticPuzzle = ({
     setIsComplete(allFilled);
   }, [inputs]);
 
-  const handleInputChange = (index, value) => {
+  const handleInputChange = (index: number, value: string) => {
     if (value.length <= 1 && /^[0-9+\-×÷=*/]?$/.test(value)) {
       const newInputs = [...inputs];
       newInputs[index] = value;
@@ -203,7 +226,7 @@ const ArithmeticPuzzle = ({
                   className={`fill-in-input ${feedback[currentIndex]}`}
                   value={inputs[currentIndex]}
                   onChange={(e) => handleInputChange(currentIndex, e.target.value)}
-                  maxLength="1"
+                  maxLength={1}
                   placeholder="?"
                 />
               );

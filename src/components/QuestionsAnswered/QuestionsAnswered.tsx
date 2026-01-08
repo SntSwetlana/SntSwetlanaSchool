@@ -1,4 +1,3 @@
-import React from 'react';
 import './../PracticeStats/PracticeStats.css';
 
 const QuestionsAnswered = ({ count = 0 }) => {

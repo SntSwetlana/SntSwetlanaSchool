@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import './../PracticeStats/PracticeStats.css';
+import { useState } from 'react';
+import '../PracticeStats/PracticeStats.css';
 
 const SmartScore = ({ score = 0, showHelp = true }) => {
   const [showTooltip, setShowTooltip] = useState(false);

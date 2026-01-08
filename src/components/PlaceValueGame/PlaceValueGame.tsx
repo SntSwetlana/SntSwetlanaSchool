@@ -1,13 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './PlaceValueGame.css';
 
-const PlaceValueGame = ({ targetNumber = 4 }) => {
+interface PlaceValueGameProps {
+  targetNumber?: number;
+}
+
+interface Option {
+  id: number;
+  value: number;
+  formattedValue: string;
+  position: number;
+  positionName: string;
+  placeValue: number;
+  targetIndex: number;
+  formattedIndex: number;
+}
+
+const PlaceValueGame: React.FC<PlaceValueGameProps> = ({ targetNumber = 4 }) => {
   // Проверяем, что число от 1 до 9 (единственная ненулевая цифра)
   const normalizedTarget = Math.min(9, Math.max(1, Math.abs(targetNumber))) || 1;
   
-  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [options, setOptions] = useState([]);
+  const [options, setOptions] = useState<Option[]>([]);
   const [correctAnswerIndex, setCorrectAnswerIndex] = useState(0);
 
   // Генерируем варианты ответов при монтировании или изменении targetNumber
@@ -20,7 +35,7 @@ const PlaceValueGame = ({ targetNumber = 4 }) => {
     const allPositions = [0, 1, 2, 3, 4];
     
     // Выбираем 4 уникальные позиции
-    const selectedPositions = [];
+    const selectedPositions: number[] = [];
     while (selectedPositions.length < 4) {
       const randomPos = allPositions[Math.floor(Math.random() * allPositions.length)];
       if (!selectedPositions.includes(randomPos)) {
@@ -54,7 +69,7 @@ const PlaceValueGame = ({ targetNumber = 4 }) => {
       const numberStr = numberValue.toString();
       const targetIndex = numberStr.length - 1 - position;
       const formattedIndex = formattedNumber.length - 1 - 
-                           formattedNumber.split('').reverse().findIndex((char, idx) => {
+                           formattedNumber.split('').reverse().findIndex((_char, idx) => {
                              const originalIdx = numberStr.length - 1 - idx;
                              return originalIdx === position;
                            });
@@ -77,12 +92,12 @@ const PlaceValueGame = ({ targetNumber = 4 }) => {
     setOptions(generatedOptions);
   };
 
-  const getPositionName = (position) => {
+  const getPositionName = (position: number): string => {
     const names = ['единиц', 'десятков', 'сотен', 'тысяч', 'десятков тысяч'];
     return names[position] || 'единиц';
   };
 
-  const getPlaceValueDescription = (value) => {
+  const getPlaceValueDescription = (value: number): string => {
     if (value >= 10000) return `${value.toLocaleString()}`;
     if (value >= 1000) return `${(value/1000).toFixed(0)} тысячи`;
     if (value >= 100) return `${value} сотни`;
@@ -90,7 +105,7 @@ const PlaceValueGame = ({ targetNumber = 4 }) => {
     return `${value}`;
   };
 
-  const handleSelect = (id) => {
+  const handleSelect = (id: number) => {
     if (!isSubmitted) {
       setSelectedAnswer(id);
     }
@@ -108,19 +123,17 @@ const PlaceValueGame = ({ targetNumber = 4 }) => {
     setIsSubmitted(false);
   };
 
-  const handleKeyPress = (e, id) => {
+  const handleKeyPress = (e: React.KeyboardEvent, id: number) => {
     if (e.key === 'Enter' || e.key === ' ') {
       handleSelect(id);
     }
   };
 
-  const renderNumberWithUnderline = (option) => {
+  const renderNumberWithUnderline = (option: Option) => {
     const formatted = option.formattedValue;
     const targetPos = option.position;
-    const numberStr = option.value.toString();
     
     // Находим индекс подчеркнутой цифры в отформатированной строке
-    const digits = numberStr.split('').reverse();
     let digitCount = 0;
     let underlinedFound = false;
     
@@ -203,7 +216,7 @@ const PlaceValueGame = ({ targetNumber = 4 }) => {
             <span className="result-text">
               {selectedAnswer === correctAnswerIndex 
                 ? `Правильно! Цифра ${normalizedTarget} в разряде ${getPositionName(options[correctAnswerIndex].position)} равна ${options[correctAnswerIndex].placeValue.toLocaleString()}`
-                : `Неверно. В выбранном числе цифра ${normalizedTarget} равна ${options[selectedAnswer]?.placeValue.toLocaleString() || 0}`
+                : `Неверно. В выбранном числе цифра ${normalizedTarget} равна ${options[selectedAnswer!]?.placeValue.toLocaleString() || 0}`
               }
             </span>
           </div>

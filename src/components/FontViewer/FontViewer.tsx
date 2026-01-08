@@ -1,8 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import './FontViewer.css';
 
+interface Font {
+  cssVar: string;
+  name: string;
+  category: 'sans-serif' | 'serif' | 'monospace';
+  example: string;
+}
+
 const FontViewer = () => {
-  const [fonts] = useState([
+  const [fonts] = useState<Font[]>([
     { cssVar: '--font-alegreya-sans', name: 'Alegreya Sans', category: 'sans-serif', example: 'The quick brown fox jumps over the lazy dog' },
     { cssVar: '--font-amaranth', name: 'Amaranth', category: 'sans-serif', example: 'Amaranth font preview' },
     { cssVar: '--font-amatic', name: 'Amatic', category: 'sans-serif', example: 'Amatic handwriting style' },
@@ -71,7 +78,7 @@ const FontViewer = () => {
 
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
-  const [selectedFont, setSelectedFont] = useState(null);
+  const [selectedFont, setSelectedFont] = useState<Font | null>(null);
   const [fontSize, setFontSize] = useState(20);
   const [customText, setCustomText] = useState('The quick brown fox jumps over the lazy dog');
 
@@ -84,24 +91,26 @@ const FontViewer = () => {
     return matchesCategory && matchesSearch;
   });
 
-  const getFontStyle = (cssVar) => {
-    // Преобразуем CSS переменную в реальное название шрифта
-    const fontName = cssVar.replace('--font-', '').replace(/-/g, ' ');
-    return { fontFamily: `"${fonts.find(f => f.cssVar === cssVar)?.name}", ${fonts.find(f => f.cssVar === cssVar)?.category || 'sans-serif'}` };
+  const getFontStyle = (cssVar: string) => {
+    const font = fonts.find(f => f.cssVar === cssVar);
+    return { 
+      fontFamily: `"${font?.name || 'Arial'}", ${font?.category || 'sans-serif'}` 
+    };
   };
 
-  const handleFontSelect = (font) => {
+
+  const handleFontSelect = (font: Font) => {
     setSelectedFont(font);
   };
 
-  const handleCopyCSS = (cssVar) => {
+  const handleCopyCSS = (cssVar: string) => {
     const cssText = `var(${cssVar})`;
     navigator.clipboard.writeText(cssText)
       .then(() => alert(`Copied: ${cssText}`))
       .catch(err => console.error('Failed to copy:', err));
   };
 
-  const handleCopyFontFamily = (font) => {
+  const handleCopyFontFamily = (font: Font) => {
     const fontFamily = `"${font.name}", ${font.category}`;
     navigator.clipboard.writeText(fontFamily)
       .then(() => alert(`Copied: ${fontFamily}`))

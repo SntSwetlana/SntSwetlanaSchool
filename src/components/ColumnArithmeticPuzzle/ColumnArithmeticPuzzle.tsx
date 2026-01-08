@@ -1,25 +1,63 @@
 import React, { useState, useEffect } from 'react';
 import './ColumnArithmeticPuzzle.css';
 
-const ColumnArithmeticPuzzle = ({ 
+interface ColumnArithmeticPuzzleProps {
+  equation?: string;
+  template?: string;
+  title?: string;
+  showHint?: boolean;
+}
+
+interface ParsedEquation {
+  firstNumber: string;
+  secondNumber: string;
+  operator: string;
+  result: string;
+}
+
+interface InputCell {
+  index: number;
+  correctValue: string;
+  row: 'first' | 'second' | 'result';
+  position: number;
+}
+
+interface TemplateParts {
+  firstNumber: string;
+  operator: string;
+  secondNumber: string;
+  equals: string;
+  result: string;
+}
+
+interface ColumnCell {
+  value: string;
+  isInput: boolean;
+  inputIndex: number;
+  isEmpty: boolean;
+  templateChar: string;
+  isOperator?: boolean;
+}
+
+const ColumnArithmeticPuzzle: React.FC<ColumnArithmeticPuzzleProps> = ({ 
   equation = "594+160=754", 
   template = "__*+*_*=___",
   title = "Сложение в столбик",
   showHint = true
 }) => {
   // Функция для нормализации операторов
-  const normalizeEquation = (eq) => {
+  const normalizeEquation = (eq:string) => {
     return eq
       .replace(/x/gi, '×')      // заменяем x на ×
       .replace(/:/g, '÷');      // заменяем : на ÷
   };
 
   // Разбираем уравнение на части
-  const parseEquation = (eq) => {
+  const parseEquation = (eq:string): ParsedEquation => {
     const normalizedEq = normalizeEquation(eq);
     const [leftSide, rightSide] = normalizedEq.split('=');
     let operator = '';
-    let numbers = [];
+    let numbers: string[] = [];
     
     // Определяем оператор
     const operators = ['+', '-', '×', '÷'];
@@ -58,7 +96,7 @@ const ColumnArithmeticPuzzle = ({
     );
     
     // Распределяем шаблон по частям уравнения
-    const templateParts = {
+    const templateParts: TemplateParts = {
       firstNumber: '',
       operator: '',
       secondNumber: '',
@@ -107,16 +145,16 @@ const ColumnArithmeticPuzzle = ({
     console.log('Template parts:', templateParts);
     
     // Создаем структуры для каждой строки столбика
-    const firstRow = [];
-    const secondRow = [];
-    const resultRow = [];
+    const firstRow: ColumnCell[] = [];
+    const secondRow: ColumnCell[] = [];
+    const resultRow: ColumnCell[] = [];
     
-    const inputs = [];
+    const inputs: InputCell[] = [];
     let inputIndex = 0;
     
     // Первая строка: первое число (выровнено по правому краю)
     for (let i = 0; i < maxLength; i++) {
-      const posInFirstNum = maxLength - firstNumber.length + i;
+//      const posInFirstNum = maxLength - firstNumber.length + i;
       let digit = '';
       let isInput = false;
       let templateChar = '';
@@ -154,12 +192,14 @@ const ColumnArithmeticPuzzle = ({
       value: operator,
       isInput: false,
       isOperator: true,
+      inputIndex: -1,
+      isEmpty: false,
       templateChar: templateParts.operator
     });
     
     // Добавляем цифры второго числа
     for (let i = 0; i < maxLength; i++) {
-      const posInSecondNum = maxLength - secondNumber.length + i;
+//      const posInSecondNum = maxLength - secondNumber.length + i;
       let digit = '';
       let isInput = false;
       let templateChar = '';
@@ -193,7 +233,7 @@ const ColumnArithmeticPuzzle = ({
     
     // Третья строка: результат
     for (let i = 0; i < maxLength; i++) {
-      const posInResult = maxLength - result.length + i;
+//      const posInResult = maxLength - result.length + i;
       let digit = '';
       let isInput = false;
       let templateChar = '';
@@ -246,17 +286,18 @@ const ColumnArithmeticPuzzle = ({
 
   const { rows, correctAnswers, inputCount, maxLength, parsedEquation, templateParts } = createColumnStructure();
   
-  const [inputs, setInputs] = useState(Array(inputCount).fill(''));
-  const [feedback, setFeedback] = useState(Array(inputCount).fill(''));
+  const [inputs, setInputs] = useState<string[]>(Array(inputCount).fill(''));
+  const [feedback, setFeedback] = useState<string[]>(Array(inputCount).fill(''));
   const [isComplete, setIsComplete] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/immutability
     checkAnswers();
     const allFilled = inputs.every(input => input.trim() !== '');
     setIsComplete(allFilled);
   }, [inputs]);
 
-  const handleInputChange = (inputIndex, value) => {
+  const handleInputChange = (inputIndex: number, value: string) => {
     if (value.length <= 1 && /^[0-9]?$/.test(value)) {
       const newInputs = [...inputs];
       newInputs[inputIndex] = value;
@@ -313,7 +354,7 @@ const ColumnArithmeticPuzzle = ({
                     className={`column-input ${feedback[cell.inputIndex]}`}
                     value={inputs[cell.inputIndex] || ''}
                     onChange={(e) => handleInputChange(cell.inputIndex, e.target.value)}
-                    maxLength="1"
+                    maxLength={1}
                     placeholder="?"
                   />
                 ) : cell.isEmpty ? (
@@ -341,7 +382,7 @@ const ColumnArithmeticPuzzle = ({
                     className={`column-input ${feedback[cell.inputIndex]}`}
                     value={inputs[cell.inputIndex] || ''}
                     onChange={(e) => handleInputChange(cell.inputIndex, e.target.value)}
-                    maxLength="1"
+                    maxLength={1}
                     placeholder="?"
                   />
                 ) : cell.isEmpty ? (
@@ -376,7 +417,7 @@ const ColumnArithmeticPuzzle = ({
                     className={`column-input ${feedback[cell.inputIndex]}`}
                     value={inputs[cell.inputIndex] || ''}
                     onChange={(e) => handleInputChange(cell.inputIndex, e.target.value)}
-                    maxLength="1"
+                    maxLength={1}
                     placeholder="?"
                   />
                 ) : cell.isEmpty ? (
@@ -427,7 +468,7 @@ const ColumnArithmeticPuzzle = ({
     const { firstNumber, secondNumber, result } = parsedEquation;
     
     // Визуализируем шаблон
-    const templateVisual = template.split('').map((char, index) => {
+/*    const templateVisual = template.split('').map((char, index) => {
       if (char === '*') {
         return <span key={index} className="template-star">*</span>;
       } else if (char === '_') {
@@ -436,9 +477,9 @@ const ColumnArithmeticPuzzle = ({
         return <span key={index} className="template-char">{char}</span>;
       }
     });
-    
+  */  
     // Разбиваем шаблон на логические части
-    let templateAnalysis = [];
+    const templateAnalysis = [];
     let currentPart = '';
     let currentType = '';
     

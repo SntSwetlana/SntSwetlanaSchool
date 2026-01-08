@@ -1,0 +1,96 @@
+/* components/LoadingSpinner.css */
+.loading-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  gap: 1rem;
+}
+
+.full-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.95);
+  z-index: 9999;
+}
+
+.spinner {
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Размеры */
+.spinner-xs {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+}
+
+.spinner-sm {
+  width: 24px;
+  height: 24px;
+  border-width: 3px;
+}
+
+.spinner-md {
+  width: 40px;
+  height: 40px;
+  border-width: 4px;
+}
+
+.spinner-lg {
+  width: 56px;
+  height: 56px;
+  border-width: 5px;
+}
+
+.spinner-xl {
+  width: 72px;
+  height: 72px;
+  border-width: 6px;
+}
+
+/* Варианты цветов */
+.spinner-default {
+  border: solid #f3f3f3;
+  border-top-color: #333;
+}
+
+.spinner-primary {
+  border: solid #f3f3f3;
+  border-top-color: #3498db;
+}
+
+.spinner-success {
+  border: solid #f3f3f3;
+  border-top-color: #2ecc71;
+}
+
+.spinner-warning {
+  border: solid #f3f3f3;
+  border-top-color: #f39c12;
+}
+
+.spinner-danger {
+  border: solid #f3f3f3;
+  border-top-color: #e74c3c;
+}
+
+.loading-text {
+  color: #666;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
