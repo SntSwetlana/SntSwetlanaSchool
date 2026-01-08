@@ -1,20 +1,16 @@
 import React, { useState } from 'react';
 import './NotLoggedMenu.css';
-import { Link } from 'react-router-dom';
-type LoginResp = { 
-  ok: boolean; 
-  roles?: string[]; 
-  username?: string;
-  gender?: 'male' | 'female';
-  reason?: string 
-};
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 
 type Props = {
   onLoginSuccess: (roles: string[]) => void;
 };
 
-const NotLoggedMenu: React.FC<Props> = ({ onLoginSuccess }) => {
- const [username, setUsername] = useState('');
+const NotLoggedMenu: React.FC<Props> = () => {
+   const { login } = useAuth();
+   const navigate = useNavigate();
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -23,41 +19,20 @@ const NotLoggedMenu: React.FC<Props> = ({ onLoginSuccess }) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
-
-    try {
-      console.log('Submitting login for', username);
-      console.log('Submitting password for', password);
-      const res = await fetch('http://localhost:3000/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ username, password }),
-      });
-
-      const data = (await res.json()) as LoginResp;
-
-      if (!res.ok || !data.ok) {
-        setError(data.reason ?? 'Invalid username or password');
-        return;
-      }
-      
-      if (data.username) {
-        sessionStorage.setItem('username', data.username);
-      }
-      if (data.gender) {
-        sessionStorage.setItem('gender', data.gender);
-      }
-      if (data.roles) {
-        sessionStorage.setItem('userRoles', JSON.stringify(data.roles));
-      }
-
-      onLoginSuccess(data.roles ?? []);
-    } catch {
-      setError('network_error');
-    } finally {
-      setLoading(false);
+     const success = await login(username, password);
+      if (!success) {
+      setError('Invalid username or password');
+    }else {
+      // После успешного логина делаем навигацию
+      // Даем время на обновление состояния
+      setTimeout(() => {
+        navigate('/dashboard'); // или navigate('/')
+      }, 100);
     }
-  }  return (
+
+    setLoading(false);}
+
+ return (
     <div className="box-site-nav-func">
       <Link to="/" className="site-nav-snt-logo site-nav-snt-logo-link" aria-label="SNT Learning Home">
       </Link>

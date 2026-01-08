@@ -19,6 +19,8 @@ interface AuthContextType {
   hasRole: (role: UserRole) => boolean;
   hasAnyRole: (roles: UserRole[]) => boolean;
   hasPermission: (permission: string) => boolean;
+  getUserDashboardPath: () => string; // Новая функция
+  getUserDashboardName: () => string; // Новая функция
   login: (username: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
 }
@@ -45,7 +47,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const checkAuth = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:3000/api/auth/verify', {
+      const response = await fetch('http://localhost:3000/api/auth/me', {
         method: 'GET',
         credentials: 'include',
       });
@@ -86,6 +88,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return userData?.permissions?.includes(permission) || false;
   }, [userData]);
 
+  const getUserDashboardPath = useCallback((): string => {
+    if (!userData) return '/login';
+    
+    if (hasRole('admin')) return '/admin';
+    if (hasRole('teacher')) return '/teacher';
+    if (hasRole('tutor')) return '/tutor';
+    if (hasRole('student')) return '/student';
+    
+    return '/'; // Для гостей и остальных
+  }, [userData, hasRole]);
+
+  const getUserDashboardName = useCallback((): string => {
+    if (!userData) return 'Login';
+    
+    if (hasRole('admin')) return 'Admin Dashboard';
+    if (hasRole('teacher')) return 'Teacher Dashboard';
+    if (hasRole('tutor')) return 'Tutor Dashboard';
+    if (hasRole('student')) return 'Student Dashboard';
+    
+    return 'Home'; // Для гостей
+  }, [userData, hasRole]);
+
   const login = async (username: string, password: string): Promise<boolean> => {
     try {
       const res = await fetch('http://localhost:3000/api/auth/login', {
@@ -102,8 +126,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       await checkAuth();
-      return true;
 
+      setIsLoggedIn(true);
+      setUserData({
+        id: Date.now().toString(),
+        username: data.username || 'User',
+        avatarType: data.gender === 'male' ? 'boy' : 'girl',
+        roles: data.roles || ['guest'],
+        email: data.email,
+        permissions: data.permissions || []
+      });
+
+    return true;
+  
     } catch (error) {
       console.error('Login error:', error);
       return false;
@@ -136,6 +171,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     hasRole,
     hasAnyRole,
     hasPermission,
+    getUserDashboardPath,
+    getUserDashboardName,
     login,
     logout,
   };

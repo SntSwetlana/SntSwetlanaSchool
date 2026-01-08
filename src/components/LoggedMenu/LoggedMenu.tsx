@@ -203,17 +203,14 @@ const LoggedMenu: React.FC<Props> = ({
             
             <div className="dropdown-divider"></div>
             
-            <button
+            <Link 
+              to="/dashboard" 
               className="dropdown-item"
-              onClick={() => {
-                onProfileClick();
-                setUserMenuOpen(false);
-              }}
+              onClick={() => setUserMenuOpen(false)}
             >
               <span className="dropdown-item-icon">👤</span>
               <span className="dropdown-item-text">Profile</span>
-            </button>
-            
+            </Link>            
             <button
               className="dropdown-item"
               onClick={() => {

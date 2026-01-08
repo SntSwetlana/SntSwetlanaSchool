@@ -1,12 +1,13 @@
 /*import React, { useEffect, useState } from 'react';*/
 import React, { Suspense, lazy, useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate  } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate  } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 //import { ProtectedRoute } from '@/components/ProtectedRoute/';
 import AppHeader from './components/AppHeader';
 import LoadingSpinner from './components/LoadingSpinner';
-import '@/App.css';
+import RoleBasedRedirect from './components/RoleBasedRedirect';
+import LoginRedirectWrapper from './components/LoginRedirectWrapper';
+
 
 import { 
   HomePage, 
@@ -14,14 +15,25 @@ import {
   ValueOfDigitPage, 
   ConvertToFromNumberPage 
 } from './components/Pages';
-import NotLoggedMenu from './components/NotLoggedMenu';
-import LoggedMenu from './components/LoggedMenu';
+
+import '@/App.css';
 type MeResp = { ok: boolean; roles?: string[] };
 interface ProtectedRouteProps {
   children: React.ReactNode;
   allowedRoles?: string[];
   redirectTo?: string;
 }
+
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const TeacherDashboard = lazy(() => import('./pages/TeacherDashboard'));
+const TutorDashboard = lazy(() => import('./pages/TutorDashboard'));
+const StudentDashboard = lazy(() => import('./pages/StudentDashboard'));
+const GuestDashboard = lazy(() => import('./pages/GuestDashboard'));
+const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+const SettingsPage = lazy(() => import('./pages/SettingsPage'));
+const LoginPage = lazy(() => import('./pages/LoginPage'));
+//const UnauthorizedPage = lazy(() => import('./pages/UnauthorizedPage'));
+
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
   children, 
@@ -51,8 +63,29 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   return <>{children}</>;
 };
 
+const HomePageWithRedirect: React.FC = () => {
+  const { isLoggedIn, loading } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading && isLoggedIn) {
+      // Если залогинен, редиректим на дашборд
+      navigate('/dashboard');
+    }
+  }, [isLoggedIn, loading, navigate]);
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
+  if (isLoggedIn) {
+    return <LoadingSpinner />; // Или null пока редирект
+  }
+
+  return <HomePage />;
+};
 // Role-based Route компонент (еще более оптимизированный)
-const RoleBasedRoute: React.FC<{
+/*const RoleBasedRoute: React.FC<{
   admin?: React.ReactNode;
   teacher?: React.ReactNode;
   tutor?: React.ReactNode;
@@ -93,48 +126,22 @@ const RoleBasedRoute: React.FC<{
 
   return <>{fallback || <Navigate to="/unauthorized" replace />}</>;
 };
-const AdminDashboard = lazy(() => import('./pages/AdminDashboard/AdminDashboard'));
-const TeacherDashboard = lazy(() => import('./pages/TeacherDashboard/TeacherDashboard'));
-const TutorDashboard = lazy(() => import('./pages/TutorDashboard/TutorDashboard'));
-const StudentDashboard = lazy(() => import('./pages/StudentDashboard/StudentDashboard'));
-const GuestDashboard = lazy(() => import('./pages/GuestDashboard/GuestDashboard'));
-const ProfilePage = lazy(() => import('./pages/ProfilePage/ProfilePage'));
-const SettingsPage = lazy(() => import('./pages/SettingsPage/SettingsPage'));
-const LoginPage = lazy(() => import('./pages/LoginPage/LoginPage'));
-//const UnauthorizedPage = lazy(() => import('./pages/UnauthorizedPage/UnauthorizedPage'));
-
+*/
 function AppRoutes() {
   return (
     <Suspense fallback={<LoadingSpinner />}>
       <Routes>
         {/* Public routes */}
-        <Route path="/login" element={<LoginPage />} />
+        <Route path="/login" element={
+           <LoginRedirectWrapper>
+            <LoginPage />
+            </LoginRedirectWrapper>} />
+        <Route path="/unauthorized" element={<div>Access Denied</div>} />
         
-        {/* Protected routes с lazy loading */}
-        <Route path="/" element={
-          <ProtectedRoute>
-            <RoleBasedRoute
-              admin={<AdminDashboard />}
-              teacher={<TeacherDashboard />}
-              tutor={<TutorDashboard />}
-              student={<StudentDashboard />}
-              guest={<GuestDashboard />}
-            />
-          </ProtectedRoute>
-        } />
+        {/* Автоматический редирект на дашборд по роли */}
+        <Route path="/dashboard" element={<RoleBasedRedirect />} />
         
-        <Route path="/profile" element={
-          <ProtectedRoute allowedRoles={['admin', 'teacher', 'student']}>
-            <ProfilePage />
-          </ProtectedRoute>
-        } />
-        
-        <Route path="/settings" element={
-          <ProtectedRoute allowedRoles={['admin', 'teacher', 'student']}>
-            <SettingsPage />
-          </ProtectedRoute>
-        } />
-        
+        {/* Дашборды для разных ролей */}
         <Route path="/admin/*" element={
           <ProtectedRoute allowedRoles={['admin']}>
             <AdminDashboard />
@@ -147,8 +154,43 @@ function AppRoutes() {
           </ProtectedRoute>
         } />
         
-        {/* Fallback routes */}
-        <Route path="/unauthorized" element={<div>Access Denied</div>} />
+        <Route path="/tutor/*" element={
+          <ProtectedRoute allowedRoles={['tutor']}>
+            <TutorDashboard />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/student/*" element={
+          <ProtectedRoute allowedRoles={['student']}>
+            <StudentDashboard />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/guest/*" element={<GuestDashboard />} />
+        
+        {/* Общие защищенные маршруты */}
+        <Route path="/profile" element={
+          <ProtectedRoute allowedRoles={['admin', 'teacher', 'tutor', 'student']}>
+            <ProfilePage />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/settings" element={
+          <ProtectedRoute allowedRoles={['admin', 'teacher', 'tutor', 'student']}>
+            <SettingsPage />
+          </ProtectedRoute>
+        } />
+        
+        {/* Страницы математики (публичные) */}
+        <Route path="/" element={<HomePageWithRedirect />} />
+        <Route path="/math/grade3/place_value_names_up_to_ten_thousands" 
+               element={<PlaceValueNamesPage />} />
+        <Route path="/math/grade3/value_of_a_digit_up_to_ten_thousands" 
+               element={<ValueOfDigitPage />} />
+        <Route path="/math/grade3/convert_to_from_a_number" 
+               element={<ConvertToFromNumberPage />} />
+        
+        {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Suspense>
@@ -156,88 +198,16 @@ function AppRoutes() {
 }
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Замените на реальную логику аутентификации
-  const [, setRoles] = useState<string[]>([]);
-
-  // 1) при старте проверяем сессию
-  useEffect(() => {
-    fetch('http://localhost:3000/api/auth/me', {
-      credentials: 'include',
-    })
-      .then(async (r) => (r.ok ? (await r.json()) as MeResp : null))
-      .then((data) => {
-        if (data?.ok) {
-          setIsLoggedIn(true);
-          setRoles(data.roles ?? []);
-        } else {
-          setIsLoggedIn(false);
-          setRoles([]);
-        }
-      })
-      .catch(() => {
-        setIsLoggedIn(false);
-        setRoles([]);
-      });
-  }, []);
-
-  const handleLoginSuccess = (newRoles: string[]) => {
-    setIsLoggedIn(true);
-    setRoles(newRoles);
-  };
-
   return (
     <AuthProvider>
       <Router>
         <div className="App">
           <AppHeader />
           <AppRoutes />
-
-          <nav className="main-nav">
-          {/* Навигационная панель (опционально) */}
-          {!isLoggedIn &&  (
-            <NotLoggedMenu onLoginSuccess={handleLoginSuccess} />
-          )}            
-          {isLoggedIn &&  (
-            <LoggedMenu userAvatarType="girl" userName="Irma" onProfileClick={() => {}} onSettingsClick={() => {}} onLogoutClick={() => {}} onSearch={() => {}} />
-          )}
-            <div className="nav-container">
-                <Link to="/" className="nav-logo">
-                  Math Grade 3
-                </Link>
-                  <div className="nav-links">
-                    <Link to="/math/grade3/place_value_names_up_to_ten_thousands">
-                      Place Value Names
-                    </Link>
-                    <Link to="/math/grade3/value_of_a_digit_up_to_ten_thousands">
-                      Value of a Digit
-                    </Link>
-                    <Link to="/math/grade3/convert_to_from_a_number">
-                      Convert Numbers
-                    </Link>
-                  </div>
-                </div>
-            </nav>
-            <Routes>
-                <Route path="/" element={<HomePage />} />
-                  <Route
-                    path="/math/grade3/place_value_names_up_to_ten_thousands"
-                    element={<PlaceValueNamesPage />} />
-                  <Route
-                    path="/math/grade3/value_of_a_digit_up_to_ten_thousands"
-                    element={<ValueOfDigitPage />} />
-                  <Route
-                    path="/math/grade3/convert_to_from_a_number"
-                    element={<ConvertToFromNumberPage />} />
-            </Routes>
-            {/* Футер (опционально) */}
-              <footer className="main-footer">
-                <div className="footer-container">
-                  <p>© 2024 Grade 3 Math Practice. Educational materials for learning place value.</p>
-                </div>
-              </footer>
-            </div>
-          </Router>
-        </AuthProvider>
+        </div>
+      </Router>
+    </AuthProvider>
   );
 }
+
 export default App;

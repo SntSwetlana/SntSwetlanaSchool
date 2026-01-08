@@ -1,10 +1,36 @@
 /* AppHeader.css */
 .app-header {
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   position: sticky;
   top: 0;
+  max-width: 2800px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   z-index: 1000;
-  background-color: white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  background: linear-gradient(135deg, #276EC7 0%, #144d05 100%);
+  color: white;
+  padding: 15px 0;
+   min-height: 52px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+
+.box-site-nav-func {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  margin: 0 auto;
+}
+
+.auth-loading {
+  padding: 1rem;
+  text-align: center;
+  color: #666;
 }
 
 .auth-loading {

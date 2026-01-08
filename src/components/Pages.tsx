@@ -1,3 +1,7 @@
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from './../contexts/AuthContext';
+
 import PlaceValueGame from './PlaceValueGame/PlaceValueGame';
 import DigitMathQuestion from './DigitMathQuestion/DigitMathQuestion';
 import UnderlinedDigitQuestion from './UnderlinedDigitQuestion/UnderlinedDigitQuestion';
@@ -115,9 +119,46 @@ export const ConvertToFromNumberPage = () => {
   );
 };
 
+
 // Домашняя страница
 export const HomePage = () => {
+    const navigate = useNavigate();
+  const { isLoggedIn, getUserDashboardPath } = useAuth();
+
+  useEffect(() => {
+    // Если пользователь залогинен, редиректим на его дашборд
+    if (isLoggedIn) {
+      const dashboardPath = getUserDashboardPath();
+      if (dashboardPath !== '/') {
+        navigate(dashboardPath);
+      }
+    }
+  }, [isLoggedIn, navigate, getUserDashboardPath]);
+
   return (
+    <>
+        <div className="home-page">
+      <h1>Welcome to Math Grade 3</h1>
+      <p>Educational materials for learning place value.</p>
+      
+      {!isLoggedIn && (
+        <div className="home-features">
+          <h2>Features:</h2>
+          <ul>
+            <li>Place Value Names</li>
+            <li>Value of a Digit</li>
+            <li>Convert Numbers</li>
+            <li>Interactive Exercises</li>
+          </ul>
+          
+          <div className="auth-cta">
+            <p>
+              <a href="/login">Login</a> to access personalized dashboard
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
     <div className="practice-page">
       <div className="home-container">
         <h1>Grade 3 Math - Place Value Practice</h1>
@@ -143,5 +184,6 @@ export const HomePage = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };

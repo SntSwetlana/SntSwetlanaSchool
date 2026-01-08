@@ -1,18 +1,20 @@
 // pages/AdminDashboard.tsx
-import React from 'react';
+import React, { Suspense } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
+import LoadingSpinner from '../../components/LoadingSpinner';
+
+const UserManagement = React.lazy(() => import('../../components/admin/UserManagement/UserManagement'));
 
 const AdminDashboard: React.FC = () => {
-  // Тяжелый компонент загружается только для админов
-  const AdminStats = React.lazy(() => import('./../../components/admin/AdminStats/AdminStats'));
-  const UserManagement = React.lazy(() => import('./../../components/admin/UserManagement/UserManagement'));
+  const { userData } = useAuth();
 
   return (
-    <div className="admin-dashboard">
-      <h1>Admin Dashboard</h1>
-      <React.Suspense fallback={<div>Loading admin modules...</div>}>
-        <AdminStats />
-        <UserManagement />
-      </React.Suspense>
+    <div className="dashboard admin-dashboard">
+      <div className="dashboard-content">
+        <Suspense fallback={<LoadingSpinner />}>
+          <UserManagement />
+        </Suspense>
+      </div>
     </div>
   );
 };
