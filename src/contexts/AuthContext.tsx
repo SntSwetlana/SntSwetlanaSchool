@@ -1,7 +1,7 @@
 // contexts/AuthContext.tsx
 import React, { createContext, useState, useContext, useEffect, type ReactNode, useCallback } from 'react';
 
-export type UserRole = 'admin' | 'teacher' | 'tutor' | 'student' | 'guest';
+export type UserRole = 'admin' | 'teacher' | 'tutor' | 'student' | 'editor' | 'guest';
 
 interface UserData {
   id: string;
@@ -14,7 +14,6 @@ interface UserData {
 
 interface AuthContextType {
   isLoggedIn: boolean;
-  userData: UserData | null;
   loading: boolean;
   hasRole: (role: UserRole) => boolean;
   hasAnyRole: (roles: UserRole[]) => boolean;
@@ -47,12 +46,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const checkAuth = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:3000/api/auth/me', {
+      const response = await fetch('/api/auth/me', {
         method: 'GET',
         credentials: 'include',
       });
 
       if (response.ok) {
+        console.log('Auth check response OK');
         const data = await response.json();
         setIsLoggedIn(true);
         setUserData({
@@ -95,6 +95,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     if (hasRole('teacher')) return '/teacher';
     if (hasRole('tutor')) return '/tutor';
     if (hasRole('student')) return '/student';
+    if (hasRole('editor')) return '/editor';
     
     return '/'; // Для гостей и остальных
   }, [userData, hasRole]);
@@ -106,13 +107,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     if (hasRole('teacher')) return 'Teacher Dashboard';
     if (hasRole('tutor')) return 'Tutor Dashboard';
     if (hasRole('student')) return 'Student Dashboard';
+    if (hasRole('editor')) return 'Editor Dashboard';
     
     return 'Home'; // Для гостей
   }, [userData, hasRole]);
 
   const login = async (username: string, password: string): Promise<boolean> => {
     try {
-      const res = await fetch('http://localhost:3000/api/auth/login', {
+      const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -147,7 +149,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = async () => {
     try {
-      await fetch('http://localhost:3000/api/auth/logout', {
+      await fetch('/api/auth/logout', {
         method: 'POST',
         credentials: 'include',
       });

@@ -3,12 +3,12 @@ export interface User {
   id: string;
   username: string;
   email: string;
-  fullName: string;
+  full_name: string;
   role: 'admin' | 'teacher' | 'tutor' | 'student' | 'guest';
   gender: 'male' | 'female' | 'other';
   status: 'active' | 'inactive' | 'suspended';
-  createdAt: string;
-  updatedAt: string;
+  created_at: string;
+  updated_at: string;
   lastLogin?: string;
   avatarType?: 'boy' | 'girl';
 }
@@ -16,7 +16,7 @@ export interface User {
 export interface CreateUserData {
   username: string;
   email: string;
-  fullName: string;
+  full_name: string;
   password: string;
   role: User['role'];
   gender: User['gender'];
@@ -25,7 +25,7 @@ export interface CreateUserData {
 export interface UpdateUserData {
   username?: string;
   email?: string;
-  fullName?: string;
+  full_name?: string;
   role?: User['role'];
   gender?: User['gender'];
   status?: User['status'];

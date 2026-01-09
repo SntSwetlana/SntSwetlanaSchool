@@ -20,7 +20,7 @@ const UserManagement: React.FC = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:3000/api/admin/users', {
+      const response = await fetch('/api/admin/users', {
         credentials: 'include',
       });
 
@@ -29,6 +29,9 @@ const UserManagement: React.FC = () => {
       }
 
       const data = await response.json();
+      console.log('-------------------');
+      console.log('Fetched users:', data.users);
+      console.log('-------------------');
       setUsers(data.users || []);
       setError(null);
     } catch (err) {
@@ -41,7 +44,7 @@ const UserManagement: React.FC = () => {
 
   const handleCreateUser = async (userData: CreateUserData) => {
     try {
-      const response = await fetch('http://localhost:3000/api/admin/users', {
+      const response = await fetch('/api/admin/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -67,12 +70,14 @@ const UserManagement: React.FC = () => {
 
   const handleUpdateUser = async (id: string, userData: UpdateUserData) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/admin/users/${id}`, {
+      const response = await fetch(`/api/admin/users/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify(userData),
       });
+      console.log('Update response:', response);
+      console.log('Update user:', userData);
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -99,7 +104,7 @@ const UserManagement: React.FC = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:3000/api/admin/users/${id}`, {
+      const response = await fetch(`/api/admin/users/${id}`, {
         method: 'DELETE',
         credentials: 'include',
       });

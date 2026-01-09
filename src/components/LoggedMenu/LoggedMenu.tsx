@@ -71,7 +71,7 @@ const LoggedMenu: React.FC<Props> = ({
 
     try {
       // Вызываем API для логаута
-      const response = await fetch('http://localhost:3000/api/auth/logout', {
+      const response = await fetch('/api/auth/logout', {
         method: 'POST',
         credentials: 'include', // Важно для HttpOnly cookies
         headers: {

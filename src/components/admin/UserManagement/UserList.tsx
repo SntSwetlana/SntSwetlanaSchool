@@ -93,7 +93,7 @@ const UserList: React.FC<UserListProps> = ({
                     <span>{user.username}</span>
                   </div>
                 </td>
-                <td>{user.fullName}</td>
+                <td>{user.full_name}</td>
                 <td>
                   <a href={`mailto:${user.email}`}>{user.email}</a>
                 </td>
@@ -107,7 +107,7 @@ const UserList: React.FC<UserListProps> = ({
                     {user.status}
                   </span>
                 </td>
-                <td>{formatDate(user.createdAt)}</td>
+                <td>{formatDate(user.created_at)}</td>
                 <td>
                   {user.lastLogin ? formatDate(user.lastLogin) : 'Never'}
                 </td>

@@ -15,7 +15,7 @@ const UserForm: React.FC<UserFormProps> = ({ user, onSubmit, onClose }) => {
   const [formData, setFormData] = useState<CreateUserData>({
     username: '',
     email: '',
-    fullName: '',
+    full_name: '',
     password: '',
     role: 'student',
     gender: 'male',
@@ -30,7 +30,7 @@ const UserForm: React.FC<UserFormProps> = ({ user, onSubmit, onClose }) => {
       setFormData({
         username: user.username,
         email: user.email,
-        fullName: user.fullName,
+        full_name: user.full_name,
         password: '', // Оставляем пустым при редактировании
         role: user.role,
         gender: user.gender,
@@ -63,7 +63,7 @@ const UserForm: React.FC<UserFormProps> = ({ user, onSubmit, onClose }) => {
       ? { 
           username: formData.username,
           email: formData.email,
-          fullName: formData.fullName,
+          full_name: formData.full_name,
           role: formData.role,
           gender: formData.gender,
         } 
@@ -122,12 +122,12 @@ const UserForm: React.FC<UserFormProps> = ({ user, onSubmit, onClose }) => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="fullName">Full Name *</label>
+            <label htmlFor="full_name">Full Name *</label>
             <input
               type="text"
-              id="fullName"
-              name="fullName"
-              value={formData.fullName}
+              id="full_name"
+              name="full_name"
+              value={formData.full_name}
               onChange={handleChange}
               required
               disabled={loading}
