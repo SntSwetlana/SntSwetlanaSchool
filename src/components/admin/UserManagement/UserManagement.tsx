@@ -29,9 +29,6 @@ const UserManagement: React.FC = () => {
       }
 
       const data = await response.json();
-      console.log('-------------------');
-      console.log('Fetched users:', data.users);
-      console.log('-------------------');
       setUsers(data.users || []);
       setError(null);
     } catch (err) {
