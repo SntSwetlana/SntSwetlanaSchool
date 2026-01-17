@@ -1,7 +1,8 @@
 /*import React, { useEffect, useState } from 'react';*/
-import React, { Suspense, lazy, useEffect, useState } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate  } from 'react-router-dom';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { useAuth } from './contexts/AuthContext';
+import { AuthProvider } from './providers/AuthProvider';
 //import { ProtectedRoute } from '@/components/ProtectedRoute/';
 import AppHeader from './components/AppHeader';
 import LoadingSpinner from './components/LoadingSpinner';
@@ -17,7 +18,6 @@ import {
 } from './components/Pages';
 
 import '@/App.css';
-type MeResp = { ok: boolean; roles?: string[] };
 interface ProtectedRouteProps {
   children: React.ReactNode;
   allowedRoles?: string[];

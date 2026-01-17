@@ -1,183 +1,35 @@
-// contexts/AuthContext.tsx
-import React, { createContext, useState, useContext, useEffect, type ReactNode, useCallback } from 'react';
+import { createContext, useContext } from 'react';
+
+export interface UserData {
+  id: string;
+  username: string;
+  avatarType: string;
+  roles: string[];
+  email?: string;
+  permissions: string[];
+}
 
 export type UserRole = 'admin' | 'teacher' | 'tutor' | 'student' | 'editor' | 'guest';
 
-interface UserData {
-  id: string;
-  username: string;
-  avatarType: 'boy' | 'girl';
-  roles: UserRole[];
-  email?: string;
-  permissions?: string[];
-}
-
-interface AuthContextType {
+export interface AuthContextType {
   isLoggedIn: boolean;
+  userData: UserData | null;
   loading: boolean;
   hasRole: (role: UserRole) => boolean;
   hasAnyRole: (roles: UserRole[]) => boolean;
   hasPermission: (permission: string) => boolean;
-  getUserDashboardPath: () => string; // Новая функция
-  getUserDashboardName: () => string; // Новая функция
+  getUserDashboardPath: () => string;
+  getUserDashboardName: () => string;
   login: (username: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const useAuth = () => {
+export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-};
-
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [userData, setUserData] = useState<UserData | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  const checkAuth = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await fetch('/api/auth/me', {
-        method: 'GET',
-        credentials: 'include',
-      });
-
-      if (response.ok) {
-        console.log('Auth check response OK');
-        const data = await response.json();
-        setIsLoggedIn(true);
-        setUserData({
-          id: data.id || Date.now().toString(),
-          username: data.username || 'User',
-          avatarType: data.gender === 'male' ? 'boy' : 'girl',
-          roles: data.roles || ['guest'],
-          email: data.email,
-          permissions: data.permissions || []
-        });
-      } else {
-        setIsLoggedIn(false);
-        setUserData(null);
-      }
-    } catch (error) {
-      console.error('Auth check failed:', error);
-      setIsLoggedIn(false);
-      setUserData(null);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  const hasRole = useCallback((role: UserRole): boolean => {
-    return userData?.roles.includes(role) || false;
-  }, [userData]);
-
-  const hasAnyRole = useCallback((roles: UserRole[]): boolean => {
-    return userData?.roles.some(role => roles.includes(role)) || false;
-  }, [userData]);
-
-  const hasPermission = useCallback((permission: string): boolean => {
-    return userData?.permissions?.includes(permission) || false;
-  }, [userData]);
-
-  const getUserDashboardPath = useCallback((): string => {
-    if (!userData) return '/login';
-    
-    if (hasRole('admin')) return '/admin';
-    if (hasRole('teacher')) return '/teacher';
-    if (hasRole('tutor')) return '/tutor';
-    if (hasRole('student')) return '/student';
-    if (hasRole('editor')) return '/editor';
-    
-    return '/'; // Для гостей и остальных
-  }, [userData, hasRole]);
-
-  const getUserDashboardName = useCallback((): string => {
-    if (!userData) return 'Login';
-    
-    if (hasRole('admin')) return 'Admin Dashboard';
-    if (hasRole('teacher')) return 'Teacher Dashboard';
-    if (hasRole('tutor')) return 'Tutor Dashboard';
-    if (hasRole('student')) return 'Student Dashboard';
-    if (hasRole('editor')) return 'Editor Dashboard';
-    
-    return 'Home'; // Для гостей
-  }, [userData, hasRole]);
-
-  const login = async (username: string, password: string): Promise<boolean> => {
-    try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ username, password }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok || !data.ok) {
-        return false;
-      }
-
-      await checkAuth();
-
-      setIsLoggedIn(true);
-      setUserData({
-        id: Date.now().toString(),
-        username: data.username || 'User',
-        avatarType: data.gender === 'male' ? 'boy' : 'girl',
-        roles: data.roles || ['guest'],
-        email: data.email,
-        permissions: data.permissions || []
-      });
-
-    return true;
-  
-    } catch (error) {
-      console.error('Login error:', error);
-      return false;
-    }
-  };
-
-  const logout = async () => {
-    try {
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-        credentials: 'include',
-      });
-    } catch (error) {
-      console.error('Logout error:', error);
-    } finally {
-      setIsLoggedIn(false);
-      setUserData(null);
-      sessionStorage.clear();
-    }
-  };
-
-  useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
-
-  const value = {
-    isLoggedIn,
-    userData,
-    loading,
-    hasRole,
-    hasAnyRole,
-    hasPermission,
-    getUserDashboardPath,
-    getUserDashboardName,
-    login,
-    logout,
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
