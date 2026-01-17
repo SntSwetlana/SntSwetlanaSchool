@@ -28,6 +28,7 @@ const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const TeacherDashboard = lazy(() => import('./pages/TeacherDashboard'));
 const TutorDashboard = lazy(() => import('./pages/TutorDashboard'));
 const StudentDashboard = lazy(() => import('./pages/StudentDashboard'));
+const EditorDashboard = lazy(() => import('./pages/EditorDashboard'));
 const GuestDashboard = lazy(() => import('./pages/GuestDashboard'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const SettingsPage = lazy(() => import('./pages/SettingsPage'));
@@ -166,6 +167,12 @@ function AppRoutes() {
           </ProtectedRoute>
         } />
         
+        <Route path="/editor/*" element={
+          <ProtectedRoute allowedRoles={['editor']}>
+            <EditorDashboard />
+          </ProtectedRoute>
+        } />
+
         <Route path="/guest/*" element={<GuestDashboard />} />
         
         {/* Общие защищенные маршруты */}
