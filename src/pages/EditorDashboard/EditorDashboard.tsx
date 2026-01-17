@@ -1,230 +1,300 @@
-// pages/EditorDashboard.tsx
 import React, { useState, useEffect } from 'react';
+import AssignmentTable from '../../components/editor/AssignmentTable';
+import FilterPanel from '../../components/editor/FilterPanel';
+import GradeSidebar from '../../components/editor/GradeSidebar';
+import AssignmentModal from '../../components/editor/AssignmentModal';
 
-import SubjectManager from './../../components/editor/SubjectManager';
-import GradeManager from './../../components/editor/GradeManager';
-import TemplateManager from './../../components/editor/TemplateManager';
-import AssignmentEditor from './../../components/editor/AssignmentEditor';
+// Временные типы для разработки
+type Assignment = {
+  id: string;
+  title: string;
+  description: string;
+  subjectId: string;
+  gradeLevel: number;
+  difficulty: 'easy' | 'medium' | 'hard';
+  estimatedTime: number;
+  instructions: string;
+  learningObjectives: string[];
+  prerequisites: string[];
+  tags: string[];
+  isPublished: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+};
 
-import type { Subject, Grade, Template, Assignment } from './../../types/editor';
-import { mockApi } from './../../services/api';
+type Subject = {
+  id: string;
+  name: string;
+  color: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+type Grade = {
+  id: string;
+  level: number;
+  name: string;
+  ageRange: { min: number; max: number };
+  createdAt: Date;
+  updatedAt: Date;
+};
 
 const EditorDashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'subjects' | 'grades' | 'templates' | 'assignments'>('subjects');
-  const [subjects, setSubjects] = useState<Subject[]>([]);
-  const [grades, setGrades] = useState<Grade[]>([]);
-  const [templates, setTemplates] = useState<Template[]>([]);
-  const [assignments, setAssignments] = useState<Assignment[]>([]);
-  const [loading, setLoading] = useState(false);
+  // Состояния для фильтров
+  const [selectedGrade, setSelectedGrade] = useState<number>(0);
+  const [selectedSubject, setSelectedSubject] = useState<string>('all');
+  const [selectedDifficulty, setSelectedDifficulty] = useState<string>('all');
+  const [selectedStatus, setSelectedStatus] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
-  // Загрузка данных при монтировании
+  // Временные данные для разработки
+  const [assignments, setAssignments] = useState<Assignment[]>([
+    {
+      id: '1',
+      title: 'Математика: Сложение чисел',
+      description: 'Базовые задачи на сложение для начальных классов',
+      subjectId: '1',
+      gradeLevel: 1,
+      difficulty: 'easy',
+      estimatedTime: 15,
+      instructions: 'Решите примеры на сложение',
+      learningObjectives: ['Освоить базовое сложение', 'Развить навыки счета'],
+      prerequisites: ['Знание чисел от 1 до 10'],
+      tags: ['математика', 'сложение', 'начальная школа'],
+      isPublished: true,
+      createdAt: new Date('2024-01-15'),
+      updatedAt: new Date('2024-01-15'),
+    },
+    {
+      id: '2',
+      title: 'Английский: Основные глаголы',
+      description: 'Изучение основных английских глаголов',
+      subjectId: '2',
+      gradeLevel: 2,
+      difficulty: 'medium',
+      estimatedTime: 25,
+      instructions: 'Заполните пропуски правильными формами глаголов',
+      learningObjectives: ['Изучить основные английские глаголы', 'Научиться их использовать в предложениях'],
+      prerequisites: ['Базовое знание английского алфавита'],
+      tags: ['английский', 'глаголы', 'язык'],
+      isPublished: false,
+      createdAt: new Date('2024-01-10'),
+      updatedAt: new Date('2024-01-12'),
+    },
+  ]);
+
+  const [subjects, setSubjects] = useState<Subject[]>([
+    { id: '1', name: 'Математика', color: '#3B82F6', createdAt: new Date(), updatedAt: new Date() },
+    { id: '2', name: 'Английский язык', color: '#10B981', createdAt: new Date(), updatedAt: new Date() },
+    { id: '3', name: 'Наука', color: '#EF4444', createdAt: new Date(), updatedAt: new Date() },
+    { id: '4', name: 'История', color: '#F59E0B', createdAt: new Date(), updatedAt: new Date() },
+  ]);
+
+  const [grades, setGrades] = useState<Grade[]>([
+    { id: '1', level: 0, name: 'Kindergarten', ageRange: { min: 5, max: 6 }, createdAt: new Date(), updatedAt: new Date() },
+    { id: '2', level: 1, name: '1st Grade', ageRange: { min: 6, max: 7 }, createdAt: new Date(), updatedAt: new Date() },
+    { id: '3', level: 2, name: '2nd Grade', ageRange: { min: 7, max: 8 }, createdAt: new Date(), updatedAt: new Date() },
+    { id: '4', level: 3, name: '3rd Grade', ageRange: { min: 8, max: 9 }, createdAt: new Date(), updatedAt: new Date() },
+    { id: '5', level: 4, name: '4th Grade', ageRange: { min: 9, max: 10 }, createdAt: new Date(), updatedAt: new Date() },
+  ]);
+
+  const [filteredAssignments, setFilteredAssignments] = useState<Assignment[]>([]);
+  const [selectedAssignments, setSelectedAssignments] = useState<string[]>([]);
+  const [isAssignmentModalOpen, setIsAssignmentModalOpen] = useState(false);
+  const [editingAssignment, setEditingAssignment] = useState<Assignment | null>(null);
+
+  // Фильтрация заданий
   useEffect(() => {
-    loadInitialData();
-  }, []);
+    let filtered = assignments;
 
-  const loadInitialData = async () => {
-    setLoading(true);
-    try {
-      const [subjectsData, gradesData, templatesData, assignmentsData] = await Promise.all([
-        mockApi.getSubjects(),
-        mockApi.getGrades(),
-        mockApi.getTemplates(),
-        mockApi.getAssignments()
-      ]);
-      
-      setSubjects(subjectsData);
-      setGrades(gradesData);
-      setTemplates(templatesData);
-      setAssignments(assignmentsData);
-    } catch (error) {
-      console.error('Error loading data:', error);
-    } finally {
-      setLoading(false);
+    // Фильтр по классу
+    if (selectedGrade !== -1) {
+      filtered = filtered.filter(assignment => assignment.gradeLevel === selectedGrade);
+    }
+
+    // Фильтр по предмету
+    if (selectedSubject !== 'all') {
+      filtered = filtered.filter(assignment => assignment.subjectId === selectedSubject);
+    }
+
+    // Фильтр по сложности
+    if (selectedDifficulty !== 'all') {
+      filtered = filtered.filter(assignment => assignment.difficulty === selectedDifficulty);
+    }
+
+    // Фильтр по статусу
+    if (selectedStatus !== 'all') {
+      filtered = filtered.filter(assignment => {
+        if (selectedStatus === 'published') return assignment.isPublished;
+        if (selectedStatus === 'draft') return !assignment.isPublished;
+        return true;
+      });
+    }
+
+    // Поиск
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(assignment =>
+        assignment.title.toLowerCase().includes(query) ||
+        assignment.description.toLowerCase().includes(query) ||
+        assignment.tags.some(tag => tag.toLowerCase().includes(query))
+      );
+    }
+
+    setFilteredAssignments(filtered);
+  }, [assignments, selectedGrade, selectedSubject, selectedDifficulty, selectedStatus, searchQuery]);
+
+  const handleGradeSelect = (gradeLevel: number) => {
+    setSelectedGrade(gradeLevel);
+    localStorage.setItem('lastSelectedGrade', gradeLevel.toString());
+  };
+
+  const handleAssignmentSelect = (assignmentId: string) => {
+    setSelectedAssignments(prev => {
+      if (prev.includes(assignmentId)) {
+        return prev.filter(id => id !== assignmentId);
+      } else {
+        return [...prev, assignmentId];
+      }
+    });
+  };
+
+  const handleSelectAll = () => {
+    if (selectedAssignments.length === filteredAssignments.length) {
+      setSelectedAssignments([]);
+    } else {
+      setSelectedAssignments(filteredAssignments.map(a => a.id));
     }
   };
 
-  // Обработчики для Subject
-  const handleAddSubject = async (subject: Omit<Subject, 'id'>) => {
-    try {
-      const newSubject = await mockApi.addSubject(subject);
-      setSubjects([...subjects, newSubject]);
-    } catch (error) {
-      console.error('Error adding subject:', error);
+  const handleAddAssignment = () => {
+    setEditingAssignment(null);
+    setIsAssignmentModalOpen(true);
+  };
+
+  const handleEditAssignment = () => {
+    if (selectedAssignments.length === 1) {
+      const assignment = assignments.find(a => a.id === selectedAssignments[0]);
+      if (assignment) {
+        setEditingAssignment(assignment);
+        setIsAssignmentModalOpen(true);
+      }
     }
   };
 
-  const handleUpdateSubject = async (id: string, updates: Partial<Subject>) => {
-    try {
-      const updatedSubject = await mockApi.updateSubject(id, updates);
-      setSubjects(subjects.map(s => s.id === id ? updatedSubject : s));
-    } catch (error) {
-      console.error('Error updating subject:', error);
+  const handleDeleteAssignments = () => {
+    if (selectedAssignments.length === 0) return;
+    
+    if (window.confirm(`Удалить ${selectedAssignments.length} задание(я)?`)) {
+      setAssignments(prev => prev.filter(a => !selectedAssignments.includes(a.id)));
+      setSelectedAssignments([]);
     }
   };
 
-  const handleDeleteSubject = async (id: string) => {
-    try {
-      await mockApi.deleteSubject(id);
-      setSubjects(subjects.filter(s => s.id !== id));
-    } catch (error) {
-      console.error('Error deleting subject:', error);
+  const handleSaveAssignment = (assignmentData: any) => {
+    if (editingAssignment) {
+      // Обновление существующего задания
+      setAssignments(prev => 
+        prev.map(a => a.id === editingAssignment.id 
+          ? { ...a, ...assignmentData, updatedAt: new Date() }
+          : a
+        )
+      );
+    } else {
+      // Создание нового задания
+      const newAssignment: Assignment = {
+        id: Date.now().toString(),
+        ...assignmentData,
+        prerequisites: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      setAssignments(prev => [...prev, newAssignment]);
     }
+    
+    setIsAssignmentModalOpen(false);
+    setEditingAssignment(null);
   };
 
-  // Обработчики для Grade
-  const handleAddGrade = async (grade: Omit<Grade, 'id'>) => {
-    try {
-      const newGrade = await mockApi.addGrade(grade);
-      setGrades([...grades, newGrade]);
-    } catch (error) {
-      console.error('Error adding grade:', error);
-    }
+  const getSubjectName = (subjectId: string) => {
+    const subject = subjects.find(s => s.id === subjectId);
+    return subject ? subject.name : 'Unknown';
   };
 
-  const handleUpdateGrade = async (id: string, updates: Partial<Grade>) => {
-    try {
-      const updatedGrade = await mockApi.updateGrade(id, updates);
-      setGrades(grades.map(g => g.id === id ? updatedGrade : g));
-    } catch (error) {
-      console.error('Error updating grade:', error);
-    }
+  const getGradeName = (gradeLevel: number) => {
+    const grade = grades.find(g => g.level === gradeLevel);
+    return grade ? grade.name : `Grade ${gradeLevel}`;
   };
-
-  const handleDeleteGrade = async (id: string) => {
-    try {
-      await mockApi.deleteGrade(id);
-      setGrades(grades.filter(g => g.id !== id));
-    } catch (error) {
-      console.error('Error deleting grade:', error);
-    }
-  };
-
-  // Обработчики для Template
-  const handleAddTemplate = async (template: Omit<Template, 'id'>) => {
-    try {
-      const newTemplate = await mockApi.addTemplate(template);
-      setTemplates([...templates, newTemplate]);
-    } catch (error) {
-      console.error('Error adding template:', error);
-    }
-  };
-
-  const handleUpdateTemplate = async (id: string, updates: Partial<Template>) => {
-    try {
-      const updatedTemplate = await mockApi.updateTemplate(id, updates);
-      setTemplates(templates.map(t => t.id === id ? updatedTemplate : t));
-    } catch (error) {
-      console.error('Error updating template:', error);
-    }
-  };
-
-  const handleDeleteTemplate = async (id: string) => {
-    try {
-      await mockApi.deleteTemplate(id);
-      setTemplates(templates.filter(t => t.id !== id));
-    } catch (error) {
-      console.error('Error deleting template:', error);
-    }
-  };
-
-  // Обработчики для Assignment
-  const handleSaveAssignment = async (assignment: Omit<Assignment, 'id'>) => {
-    try {
-      const newAssignment = await mockApi.addAssignment(assignment);
-      setAssignments([...assignments, newAssignment]);
-    } catch (error) {
-      console.error('Error saving assignment:', error);
-    }
-  };
-
-  const handleUpdateAssignment = async (id: string, updates: Partial<Assignment>) => {
-    try {
-      const updatedAssignment = await mockApi.updateAssignment(id, updates);
-      setAssignments(assignments.map(a => a.id === id ? updatedAssignment : a));
-    } catch (error) {
-      console.error('Error updating assignment:', error);
-    }
-  };
-
-  if (loading) {
-    return <div className="loading">Loading...</div>;
-  }
 
   return (
-    <div className="editor-dashboard">
-      <div className="dashboard-header">
-        <h1>Editor Dashboard</h1>
-        <p className="subtitle">Manage your educational content</p>
+    <div className="editor-dashboard admin-layout">
+      {/* Боковая панель с классами */}
+      <GradeSidebar
+        grades={grades}
+        selectedGrade={selectedGrade}
+        onGradeSelect={handleGradeSelect}
+      />
+
+      {/* Основное содержимое */}
+      <div className="dashboard-main">
+        {/* Панель фильтров */}
+        <FilterPanel
+          subjects={subjects}
+          selectedSubject={selectedSubject}
+          selectedDifficulty={selectedDifficulty}
+          selectedStatus={selectedStatus}
+          searchQuery={searchQuery}
+          onSubjectChange={setSelectedSubject}
+          onDifficultyChange={setSelectedDifficulty}
+          onStatusChange={setSelectedStatus}
+          onSearchChange={setSearchQuery}
+          onAddAssignment={handleAddAssignment}
+          onEditAssignment={handleEditAssignment}
+          onDeleteAssignments={handleDeleteAssignments}
+          hasSelection={selectedAssignments.length > 0}
+          canEdit={selectedAssignments.length === 1}
+        />
+
+        {/* Таблица заданий */}
+        <AssignmentTable
+          assignments={filteredAssignments}
+          selectedAssignments={selectedAssignments}
+          subjects={subjects}
+          grades={grades}
+          onSelectAssignment={handleAssignmentSelect}
+          onSelectAll={handleSelectAll}
+          getSubjectName={getSubjectName}
+          getGradeName={getGradeName}
+        />
+
+        {/* Информация о выбранном классе */}
+        <div className="grade-info">
+          <h3>{getGradeName(selectedGrade)}</h3>
+          <p>Заданий: {filteredAssignments.length}</p>
+          {selectedGrade !== -1 && grades.find(g => g.level === selectedGrade)?.name && (
+            <p className="grade-description">
+              Возраст: {grades.find(g => g.level === selectedGrade)?.ageRange.min}-
+              {grades.find(g => g.level === selectedGrade)?.ageRange.max} лет
+            </p>
+          )}
+        </div>
       </div>
 
-      <div className="dashboard-tabs">
-        <button 
-          className={`tab-button ${activeTab === 'subjects' ? 'active' : ''}`}
-          onClick={() => setActiveTab('subjects')}
-        >
-          Subjects
-        </button>
-        <button 
-          className={`tab-button ${activeTab === 'grades' ? 'active' : ''}`}
-          onClick={() => setActiveTab('grades')}
-        >
-          Grades (K-12)
-        </button>
-        <button 
-          className={`tab-button ${activeTab === 'templates' ? 'active' : ''}`}
-          onClick={() => setActiveTab('templates')}
-        >
-          Templates
-        </button>
-        <button 
-          className={`tab-button ${activeTab === 'assignments' ? 'active' : ''}`}
-          onClick={() => setActiveTab('assignments')}
-        >
-          Assignment Editor
-        </button>
-      </div>
-
-      <div className="dashboard-content">
-        {activeTab === 'subjects' && (
-          <SubjectManager
-            subjects={subjects}
-            onAdd={handleAddSubject}
-            onUpdate={handleUpdateSubject}
-            onDelete={handleDeleteSubject}
-          />
-        )}
-
-        {activeTab === 'grades' && (
-          <GradeManager
-            grades={grades}
-            onAdd={handleAddGrade}
-            onUpdate={handleUpdateGrade}
-            onDelete={handleDeleteGrade}
-          />
-        )}
-
-        {activeTab === 'templates' && (
-          <TemplateManager
-            templates={templates}
-            subjects={subjects}
-            grades={grades}
-            onAdd={handleAddTemplate}
-            onUpdate={handleUpdateTemplate}
-            onDelete={handleDeleteTemplate}
-          />
-        )}
-
-        {activeTab === 'assignments' && (
-          <AssignmentEditor
-            templates={templates}
-            subjects={subjects}
-            grades={grades}
-            assignments={assignments}
-            onSave={handleSaveAssignment}
-            onUpdate={handleUpdateAssignment}
-          />
-        )}
-      </div>
+      {/* Модальное окно для создания/редактирования задания */}
+      {isAssignmentModalOpen && (
+        <AssignmentModal
+          assignment={editingAssignment}
+          subjects={subjects}
+          grades={grades}
+          templates={[]}
+          onSave={handleSaveAssignment}
+          onClose={() => {
+            setIsAssignmentModalOpen(false);
+            setEditingAssignment(null);
+          }}
+          selectedGrade={selectedGrade}
+        />
+      )}
     </div>
   );
 };
