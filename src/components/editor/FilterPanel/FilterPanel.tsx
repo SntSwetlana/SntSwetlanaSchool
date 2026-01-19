@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Subject } from './../../../types/editor';
+import './FilterPanel.css';
 
 interface FilterPanelProps {
   subjects: Subject[];

@@ -9,5 +9,4 @@ const GuestDashboard: React.FC = () => {
     </div>
   );
 };
-
 export default GuestDashboard;

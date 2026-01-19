@@ -3,8 +3,8 @@ import AssignmentTable from '../../components/editor/AssignmentTable';
 import FilterPanel from '../../components/editor/FilterPanel';
 import GradeSidebar from '../../components/editor/GradeSidebar';
 import AssignmentModal from '../../components/editor/AssignmentModal';
+import './EditorDashboard.css';
 
-// Временные типы для разработки
 type Assignment = {
   id: string;
   title: string;
@@ -40,54 +40,20 @@ type Grade = {
 };
 
 const EditorDashboard: React.FC = () => {
-  // Состояния для фильтров
   const [selectedGrade, setSelectedGrade] = useState<number>(0);
   const [selectedSubject, setSelectedSubject] = useState<string>('all');
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-  // Временные данные для разработки
   const [assignments, setAssignments] = useState<Assignment[]>([
-    {
-      id: '1',
-      title: 'Математика: Сложение чисел',
-      description: 'Базовые задачи на сложение для начальных классов',
-      subjectId: '1',
-      gradeLevel: 1,
-      difficulty: 'easy',
-      estimatedTime: 15,
-      instructions: 'Решите примеры на сложение',
-      learningObjectives: ['Освоить базовое сложение', 'Развить навыки счета'],
-      prerequisites: ['Знание чисел от 1 до 10'],
-      tags: ['математика', 'сложение', 'начальная школа'],
-      isPublished: true,
-      createdAt: new Date('2024-01-15'),
-      updatedAt: new Date('2024-01-15'),
-    },
-    {
-      id: '2',
-      title: 'Английский: Основные глаголы',
-      description: 'Изучение основных английских глаголов',
-      subjectId: '2',
-      gradeLevel: 2,
-      difficulty: 'medium',
-      estimatedTime: 25,
-      instructions: 'Заполните пропуски правильными формами глаголов',
-      learningObjectives: ['Изучить основные английские глаголы', 'Научиться их использовать в предложениях'],
-      prerequisites: ['Базовое знание английского алфавита'],
-      tags: ['английский', 'глаголы', 'язык'],
-      isPublished: false,
-      createdAt: new Date('2024-01-10'),
-      updatedAt: new Date('2024-01-12'),
-    },
+    // 
   ]);
 
   const [subjects, setSubjects] = useState<Subject[]>([
-    { id: '1', name: 'Математика', color: '#3B82F6', createdAt: new Date(), updatedAt: new Date() },
-    { id: '2', name: 'Английский язык', color: '#10B981', createdAt: new Date(), updatedAt: new Date() },
-    { id: '3', name: 'Наука', color: '#EF4444', createdAt: new Date(), updatedAt: new Date() },
-    { id: '4', name: 'История', color: '#F59E0B', createdAt: new Date(), updatedAt: new Date() },
+    // 
   ]);
 
   const [grades, setGrades] = useState<Grade[]>([
@@ -96,6 +62,14 @@ const EditorDashboard: React.FC = () => {
     { id: '3', level: 2, name: '2nd Grade', ageRange: { min: 7, max: 8 }, createdAt: new Date(), updatedAt: new Date() },
     { id: '4', level: 3, name: '3rd Grade', ageRange: { min: 8, max: 9 }, createdAt: new Date(), updatedAt: new Date() },
     { id: '5', level: 4, name: '4th Grade', ageRange: { min: 9, max: 10 }, createdAt: new Date(), updatedAt: new Date() },
+    { id: '6', level: 5, name: '5th Grade', ageRange: { min: 10, max: 11 }, createdAt: new Date(), updatedAt: new Date() },
+    { id: '7', level: 6, name: '6th Grade', ageRange: { min: 11, max: 12 }, createdAt: new Date(), updatedAt: new Date() },
+    { id: '8', level: 7, name: '7th Grade', ageRange: { min: 12, max: 13 }, createdAt: new Date(), updatedAt: new Date() },
+    { id: '9', level: 8, name: '8th Grade', ageRange: { min: 13, max: 14 }, createdAt: new Date(), updatedAt: new Date() },
+    { id: '10', level: 9, name: '9th Grade', ageRange: { min: 14, max: 15 }, createdAt: new Date(), updatedAt: new Date() },
+    { id: '11', level: 10, name: '10th Grade', ageRange: { min: 15, max: 16 }, createdAt: new Date(), updatedAt: new Date() },
+    { id: '12', level: 11, name: '11th Grade', ageRange: { min: 16, max: 17 }, createdAt: new Date(), updatedAt: new Date() },
+    { id: '13', level: 12, name: '12th Grade', ageRange: { min: 17, max: 18 }, createdAt: new Date(), updatedAt: new Date() },
   ]);
 
   const [filteredAssignments, setFilteredAssignments] = useState<Assignment[]>([]);
@@ -103,26 +77,63 @@ const EditorDashboard: React.FC = () => {
   const [isAssignmentModalOpen, setIsAssignmentModalOpen] = useState(false);
   const [editingAssignment, setEditingAssignment] = useState<Assignment | null>(null);
 
+  // Определяем мобильное устройство
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      // На мобильных всегда сворачиваем
+      if (mobile && !isSidebarCollapsed) {
+        setIsSidebarCollapsed(true);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Инициализация
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isSidebarCollapsed]);
+
+  // Восстанавливаем состояние из localStorage
+  useEffect(() => {
+    const savedGrade = localStorage.getItem('lastSelectedGrade');
+    const savedCollapsed = localStorage.getItem('sidebarCollapsed');
+    
+    if (savedGrade) {
+      setSelectedGrade(parseInt(savedGrade));
+    }
+    
+    if (savedCollapsed && !isMobile) {
+      setIsSidebarCollapsed(savedCollapsed === 'true');
+    }
+  }, [isMobile]);
+
+  // Сохраняем состояние в localStorage
+  useEffect(() => {
+    localStorage.setItem('lastSelectedGrade', selectedGrade.toString());
+  }, [selectedGrade]);
+
+  useEffect(() => {
+    if (!isMobile) {
+      localStorage.setItem('sidebarCollapsed', isSidebarCollapsed.toString());
+    }
+  }, [isSidebarCollapsed, isMobile]);
+
   // Фильтрация заданий
   useEffect(() => {
     let filtered = assignments;
 
-    // Фильтр по классу
     if (selectedGrade !== -1) {
       filtered = filtered.filter(assignment => assignment.gradeLevel === selectedGrade);
     }
 
-    // Фильтр по предмету
     if (selectedSubject !== 'all') {
       filtered = filtered.filter(assignment => assignment.subjectId === selectedSubject);
     }
 
-    // Фильтр по сложности
     if (selectedDifficulty !== 'all') {
       filtered = filtered.filter(assignment => assignment.difficulty === selectedDifficulty);
     }
 
-    // Фильтр по статусу
     if (selectedStatus !== 'all') {
       filtered = filtered.filter(assignment => {
         if (selectedStatus === 'published') return assignment.isPublished;
@@ -131,7 +142,6 @@ const EditorDashboard: React.FC = () => {
       });
     }
 
-    // Поиск
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(assignment =>
@@ -144,77 +154,11 @@ const EditorDashboard: React.FC = () => {
     setFilteredAssignments(filtered);
   }, [assignments, selectedGrade, selectedSubject, selectedDifficulty, selectedStatus, searchQuery]);
 
-  const handleGradeSelect = (gradeLevel: number) => {
-    setSelectedGrade(gradeLevel);
-    localStorage.setItem('lastSelectedGrade', gradeLevel.toString());
+  const handleSidebarToggle = (collapsed: boolean) => {
+    setIsSidebarCollapsed(collapsed);
   };
 
-  const handleAssignmentSelect = (assignmentId: string) => {
-    setSelectedAssignments(prev => {
-      if (prev.includes(assignmentId)) {
-        return prev.filter(id => id !== assignmentId);
-      } else {
-        return [...prev, assignmentId];
-      }
-    });
-  };
-
-  const handleSelectAll = () => {
-    if (selectedAssignments.length === filteredAssignments.length) {
-      setSelectedAssignments([]);
-    } else {
-      setSelectedAssignments(filteredAssignments.map(a => a.id));
-    }
-  };
-
-  const handleAddAssignment = () => {
-    setEditingAssignment(null);
-    setIsAssignmentModalOpen(true);
-  };
-
-  const handleEditAssignment = () => {
-    if (selectedAssignments.length === 1) {
-      const assignment = assignments.find(a => a.id === selectedAssignments[0]);
-      if (assignment) {
-        setEditingAssignment(assignment);
-        setIsAssignmentModalOpen(true);
-      }
-    }
-  };
-
-  const handleDeleteAssignments = () => {
-    if (selectedAssignments.length === 0) return;
-    
-    if (window.confirm(`Удалить ${selectedAssignments.length} задание(я)?`)) {
-      setAssignments(prev => prev.filter(a => !selectedAssignments.includes(a.id)));
-      setSelectedAssignments([]);
-    }
-  };
-
-  const handleSaveAssignment = (assignmentData: any) => {
-    if (editingAssignment) {
-      // Обновление существующего задания
-      setAssignments(prev => 
-        prev.map(a => a.id === editingAssignment.id 
-          ? { ...a, ...assignmentData, updatedAt: new Date() }
-          : a
-        )
-      );
-    } else {
-      // Создание нового задания
-      const newAssignment: Assignment = {
-        id: Date.now().toString(),
-        ...assignmentData,
-        prerequisites: [],
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-      setAssignments(prev => [...prev, newAssignment]);
-    }
-    
-    setIsAssignmentModalOpen(false);
-    setEditingAssignment(null);
-  };
+  // Остальные обработчики остаются без изменений...
 
   const getSubjectName = (subjectId: string) => {
     const subject = subjects.find(s => s.id === subjectId);
@@ -232,11 +176,12 @@ const EditorDashboard: React.FC = () => {
       <GradeSidebar
         grades={grades}
         selectedGrade={selectedGrade}
-        onGradeSelect={handleGradeSelect}
+        onGradeSelect={setSelectedGrade}
+        onToggleCollapse={handleSidebarToggle}
       />
 
-      {/* Основное содержимое */}
-      <div className="dashboard-main">
+      {/* Основное содержимое - автоматически расширяется */}
+      <div className={`dashboard-main ${isSidebarCollapsed ? 'sidebar-collapsed' : 'sidebar-expanded'}`}>
         {/* Панель фильтров */}
         <FilterPanel
           subjects={subjects}
@@ -248,35 +193,93 @@ const EditorDashboard: React.FC = () => {
           onDifficultyChange={setSelectedDifficulty}
           onStatusChange={setSelectedStatus}
           onSearchChange={setSearchQuery}
-          onAddAssignment={handleAddAssignment}
-          onEditAssignment={handleEditAssignment}
-          onDeleteAssignments={handleDeleteAssignments}
+          onAddAssignment={() => {
+            setEditingAssignment(null);
+            setIsAssignmentModalOpen(true);
+          }}
+          onEditAssignment={() => {
+            if (selectedAssignments.length === 1) {
+              const assignment = assignments.find(a => a.id === selectedAssignments[0]);
+              if (assignment) {
+                setEditingAssignment(assignment);
+                setIsAssignmentModalOpen(true);
+              }
+            }
+          }}
+          onDeleteAssignments={() => {
+            if (selectedAssignments.length === 0) return;
+            if (window.confirm(`Удалить ${selectedAssignments.length} задание(я)?`)) {
+              setAssignments(prev => prev.filter(a => !selectedAssignments.includes(a.id)));
+              setSelectedAssignments([]);
+            }
+          }}
           hasSelection={selectedAssignments.length > 0}
           canEdit={selectedAssignments.length === 1}
         />
 
-        {/* Таблица заданий */}
-        <AssignmentTable
-          assignments={filteredAssignments}
-          selectedAssignments={selectedAssignments}
-          subjects={subjects}
-          grades={grades}
-          onSelectAssignment={handleAssignmentSelect}
-          onSelectAll={handleSelectAll}
-          getSubjectName={getSubjectName}
-          getGradeName={getGradeName}
-        />
+        {/* Таблица заданий - занимает всю доступную ширину */}
+        <div className="table-container">
+          <AssignmentTable
+            assignments={filteredAssignments}
+            selectedAssignments={selectedAssignments}
+            subjects={subjects}
+            grades={grades}
+            onSelectAssignment={(assignmentId) => {
+              setSelectedAssignments(prev => {
+                if (prev.includes(assignmentId)) {
+                  return prev.filter(id => id !== assignmentId);
+                } else {
+                  return [...prev, assignmentId];
+                }
+              });
+            }}
+            onSelectAll={() => {
+              if (selectedAssignments.length === filteredAssignments.length) {
+                setSelectedAssignments([]);
+              } else {
+                setSelectedAssignments(filteredAssignments.map(a => a.id));
+              }
+            }}
+            getSubjectName={getSubjectName}
+            getGradeName={getGradeName}
+          />
+        </div>
 
         {/* Информация о выбранном классе */}
         <div className="grade-info">
-          <h3>{getGradeName(selectedGrade)}</h3>
-          <p>Заданий: {filteredAssignments.length}</p>
-          {selectedGrade !== -1 && grades.find(g => g.level === selectedGrade)?.name && (
-            <p className="grade-description">
-              Возраст: {grades.find(g => g.level === selectedGrade)?.ageRange.min}-
-              {grades.find(g => g.level === selectedGrade)?.ageRange.max} лет
-            </p>
-          )}
+          <div className="grade-info-header">
+            <h3>{getGradeName(selectedGrade)}</h3>
+            <button 
+              className="expand-sidebar-button"
+              onClick={() => setIsSidebarCollapsed(false)}
+              title="Показать панель классов"
+            >
+              Показать классы
+            </button>
+          </div>
+          <div className="grade-info-stats">
+            <div className="stat-item">
+              <span className="stat-label">Заданий:</span>
+              <span className="stat-value">{filteredAssignments.length}</span>
+            </div>
+            {selectedGrade !== -1 && grades.find(g => g.level === selectedGrade) && (
+              <>
+                <div className="stat-item">
+                  <span className="stat-label">Возраст:</span>
+                  <span className="stat-value">
+                    {grades.find(g => g.level === selectedGrade)?.ageRange.min}-
+                    {grades.find(g => g.level === selectedGrade)?.ageRange.max} лет
+                  </span>
+                </div>
+                <div className="stat-item">
+                  <span className="stat-label">Уровень:</span>
+                  <span className="stat-value">
+                    {grades.find(g => g.level === selectedGrade)?.level === 0 ? 'K' : grades.find(g => g.level === selectedGrade)?.level}
+                  </span>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
 
@@ -287,7 +290,28 @@ const EditorDashboard: React.FC = () => {
           subjects={subjects}
           grades={grades}
           templates={[]}
-          onSave={handleSaveAssignment}
+          onSave={(assignmentData) => {
+            if (editingAssignment) {
+              setAssignments(prev => 
+                prev.map(a => a.id === editingAssignment.id 
+                  ? { ...a, ...assignmentData, updatedAt: new Date() }
+                  : a
+                )
+              );
+            } else {
+              const newAssignment: Assignment = {
+                id: Date.now().toString(),
+                ...assignmentData,
+                prerequisites: [],
+                createdAt: new Date(),
+                updatedAt: new Date(),
+              };
+              setAssignments(prev => [...prev, newAssignment]);
+            }
+            
+            setIsAssignmentModalOpen(false);
+            setEditingAssignment(null);
+          }}
           onClose={() => {
             setIsAssignmentModalOpen(false);
             setEditingAssignment(null);

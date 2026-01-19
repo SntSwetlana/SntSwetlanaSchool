@@ -1,0 +1,521 @@
+/* Grade Sidebar Styles */
+.grade-sidebar {
+  position: absolute; /*position: fixed;*/
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: white;
+  border-right: 1px solid #e1e5eb;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 100;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  overflow-x: hidden;
+  white-space: nowrap;
+}
+
+/* Развернутое состояние */
+.grade-sidebar.expanded {
+  width: 280px;
+  min-width: 280px;
+  transform: translateX(0);
+}
+
+/* Свернутое состояние - ТОЛЬКО КРУЖОЧКИ */
+.grade-sidebar.collapsed {
+  width: 80px;
+  min-width: 80px;
+  padding: 20px 15px;
+  align-items: center;
+}
+
+/* При наведении на свернутый - временно показываем детали */
+.grade-sidebar.collapsed:hover {
+  width: 280px;
+  align-items: stretch;
+  padding: 20px 0;
+  z-index: 11;
+}
+
+/* Мобильная версия */
+.grade-sidebar.mobile {
+  position: fixed;
+  z-index: 1000;
+  transform: translateX(-100%);
+  top: 0;/* */
+  bottom: 0;/* */
+  left: 0;/* */
+}
+
+.grade-sidebar.mobile.expanded {
+  transform: translateX(0);
+}
+
+/* Кнопка toggle */
+.sidebar-toggle {
+  position: absolute;
+  top: 20px;
+  right: -15px;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #e1e5eb;
+  background: white;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #4a5568;
+  transition: all 0.2s ease;
+  z-index: 102;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-toggle:hover {
+  background: #4299e1;
+  color: white;
+  border-color: #4299e1;
+  transform: scale(1.1);
+}
+
+/* Секция "Все классы" */
+.all-grades-section {
+  padding: 20px 20px 15px;
+  border-bottom: 1px solid #e1e5eb;
+  margin-bottom: 15px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* В свернутом состоянии скрываем все детали */
+/*.grade-sidebar.collapsed .all-grades-section {
+  display: none;
+  opacity: 0;
+  height: 0;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+}
+*/
+/* При наведении показываем */
+.grade-sidebar.collapsed:hover .all-grades-section {
+  display: block;
+  opacity: 1;
+  height: auto;
+  padding: 20px 20px 15px;
+  margin-bottom: 15px;
+  transition: opacity 0.3s ease, padding 0.3s ease, margin 0.3s ease;
+}
+
+.all-grades-button {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid #e2e8f0;
+  background: white;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+
+.all-grades-button:hover {
+  border-color: #4299e1;
+  background: #f0f9ff;
+}
+
+.all-grades-button.selected {
+  border-color: #4299e1;
+  background: #ebf8ff;
+}
+
+.all-grades-icon {
+  font-size: 20px;
+  width: 24px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.all-grades-text {
+  flex: 1;
+  font-weight: 600;
+  color: #2d3748;
+  font-size: 14px;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.all-grades-count {
+  background: #4299e1;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* Список классов */
+.grades-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 20px;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.grade-sidebar.collapsed .grades-list {
+  padding: 0 10px;
+  align-items: center;
+}
+
+.grade-sidebar.collapsed:hover .grades-list {
+  padding: 0 20px;
+  align-items: stretch;
+}
+
+.grade-item {
+  border: none;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
+  border-radius: 8px;
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  margin-bottom: 8px;
+  min-height: 48px;
+}
+
+/* В свернутом состоянии центрируем кружочки */
+.grade-sidebar.collapsed .grade-item {
+  justify-content: center;
+  padding: 10px;
+  width: auto;
+  margin-bottom: 4px;
+}
+
+/* При наведении возвращаем нормальный layout */
+.grade-sidebar.collapsed:hover .grade-item {
+  justify-content: flex-start;
+  padding: 10px 12px;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.grade-item:hover {
+  background: #f7fafc;
+}
+
+.grade-item.selected {
+  background: #ebf8ff;
+}
+
+/* Круг с номером класса - ВСЕГДА ВИДЕН */
+.grade-circle {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  position: relative;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+/* В свернутом состоянии делаем кружки чуть больше */
+.grade-sidebar.collapsed .grade-circle {
+  width: 50px;
+  height: 50px;
+  font-size: 18px;
+  margin: 0;
+}
+
+.grade-sidebar.collapsed:hover .grade-circle {
+  width: 40px;
+  height: 40px;
+  font-size: 16px;
+}
+
+.grade-item:hover .grade-circle {
+  transform: scale(1.1);
+}
+
+.grade-item.selected .grade-circle {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.grade-selected-indicator {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 12px;
+  height: 12px;
+  background: white;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+}
+
+/* Детали класса */
+.grade-details {
+  flex: 1;
+  min-width: 0;
+  margin-left: 12px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 0.2s ease, margin 0.2s ease;
+}
+
+/* В свернутом состоянии скрываем детали */
+.grade-sidebar.collapsed .grade-details {
+  display: none;
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  margin-left: 0;
+}
+
+/* При наведении показываем */
+.grade-sidebar.collapsed:hover .grade-details {
+  display: flex;
+  opacity: 1;
+  width: auto;
+  margin-left: 12px;
+}
+
+.grade-name {
+  font-weight: 500;
+  color: #2d3748;
+  font-size: 14px;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+.grade-age {
+  font-size: 12px;
+  color: #718096;
+  line-height: 1.2;
+}
+
+.grade-status {
+  font-size: 11px;
+  color: #48bb78;
+  font-weight: 500;
+  margin-top: 2px;
+  line-height: 1.2;
+}
+
+.grade-item.selected .grade-status {
+  color: #4299e1;
+}
+
+/* Индикатор выбора для свернутого состояния */
+.collapsed-selected-indicator {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.grade-sidebar.collapsed .grade-item.selected .collapsed-selected-indicator {
+  opacity: 1;
+}
+
+/* При наведении скрываем маленький индикатор */
+.grade-sidebar.collapsed:hover .collapsed-selected-indicator {
+  opacity: 0 !important;
+}
+
+/* Footer */
+.sidebar-footer {
+  padding: 20px;
+  border-top: 1px solid #e1e5eb;
+  background: #f7fafc;
+  width: 100%;
+  box-sizing: border-box;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.grade-sidebar.collapsed .sidebar-footer {
+  display: none;
+  opacity: 0;
+  height: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.grade-sidebar.collapsed:hover .sidebar-footer {
+  display: block;
+  opacity: 1;
+  height: auto;
+  padding: 20px;
+}
+
+.grade-system-info {
+  margin-bottom: 15px;
+}
+
+.system-label {
+  font-weight: 600;
+  color: #2d3748;
+  font-size: 14px;
+  margin-bottom: 4px;
+  white-space: nowrap;
+}
+
+.age-range {
+  font-size: 12px;
+  color: #718096;
+  white-space: nowrap;
+}
+
+.active-grade-info {
+  padding: 10px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.active-grade {
+  font-size: 13px;
+  color: #2d3748;
+  margin-bottom: 4px;
+  white-space: nowrap;
+}
+
+.assignments-count {
+  font-size: 12px;
+  color: #48bb78;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Mobile Handle */
+.mobile-handle {
+  position: fixed;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 80px;
+  background: #4299e1;
+  border-radius: 0 8px 8px 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  z-index: 999;
+  box-shadow: 2px 0 8px rgba(66, 153, 225, 0.3);
+  transition: all 0.2s ease;
+}
+
+.mobile-handle:hover {
+  width: 45px;
+  background: #3182ce;
+}
+
+.handle-icon {
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.handle-text {
+  color: white;
+  font-size: 10px;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  white-space: nowrap;
+}
+
+/* Scrollbar стили */
+.grades-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.grades-list::-webkit-scrollbar-track {
+  background: #f7fafc;
+  border-radius: 2px;
+}
+
+.grades-list::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 2px;
+}
+
+.grades-list::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+
+/* Анимации */
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.grade-sidebar.mobile.expanded {
+  animation: slideIn 0.3s ease;
+}
+
+/* Убираем горизонтальный скролл */
+.grade-sidebar * {
+  max-width: 100%;
+}
+
+/* Гарантируем вертикальное расположение при любом состоянии */
+.grades-list {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.grade-item {
+  flex-direction: row !important;
+}
+
+/* Гарантируем, что элементы не переходят на новую строку */
+.grade-sidebar,
+.grade-sidebar * {
+  white-space: nowrap;
+}
