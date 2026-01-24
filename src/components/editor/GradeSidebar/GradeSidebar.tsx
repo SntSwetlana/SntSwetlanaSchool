@@ -95,20 +95,8 @@ const GradeSidebar: React.FC<GradeSidebarProps> = ({
           {isCollapsed ? '→' : '←'}
         </button>
 
-        {/* Все классы кнопка */}
-        <div className="all-grades-section">
-          <button 
-            className={`all-grades-button ${selectedGrade === -1 ? 'selected' : ''}`}
-            onClick={() => handleGradeClick(-1)}
-          >
-            <span className="all-grades-icon">🏫</span>
-            <span className="all-grades-text">Все классы</span>
-            <span className="all-grades-count">{grades.length}</span>
-          </button>
-        </div>
-
         {/* Список классов */}
-        <div className="grades-list">
+        <div className="grades-list"> 
           {sortedGrades.map(grade => {
             const isSelected = selectedGrade === grade.level;
             const gradeColor = getGradeColor(grade.level);
@@ -118,7 +106,7 @@ const GradeSidebar: React.FC<GradeSidebarProps> = ({
                 key={grade.id}
                 className={`grade-item ${isSelected ? 'selected' : ''}`}
                 onClick={() => handleGradeClick(grade.level)}
-                title={`${grade.name} (${grade.ageRange.min}-${grade.ageRange.max} лет)`}
+                title={isCollapsed && isHovered ? `${grade.name} (${grade.ageRange.min}-${grade.ageRange.max} лет)` : ''}
               >
                 {/* Круг с номером класса - ВСЕГДА ВИДЕН */}
                 <div 
@@ -132,13 +120,12 @@ const GradeSidebar: React.FC<GradeSidebarProps> = ({
                 </div>
 
                 {/* Детали класса */}
+                {isCollapsed && !isHovered? null : (
                 <div className="grade-details">
                   <div className="grade-name">{grade.name}</div>
                   <div className="grade-age">{grade.ageRange.min}-{grade.ageRange.max} лет</div>
-                  <div className="grade-status">
-                    {isSelected ? 'Выбран' : 'Не выбрано'}
-                  </div>
                 </div>
+                )}
 
                 {/* Маленький индикатор для свернутого состояния */}
                 {isSelected && (
@@ -152,25 +139,6 @@ const GradeSidebar: React.FC<GradeSidebarProps> = ({
           })}
         </div>
 
-        {/* Footer с информацией */}
-        <div className="sidebar-footer">
-          <div className="grade-system-info">
-            <div className="system-label">Система K-12</div>
-            <div className="age-range">Возраст: 5-18 лет</div>
-          </div>
-          <div className="active-grade-info">
-            {selectedGrade !== -1 && (
-              <>
-                <div className="active-grade">
-                  Выбран: {sortedGrades.find(g => g.level === selectedGrade)?.name || 'Все'}
-                </div>
-                <div className="assignments-count">
-                  Заданий: {sortedGrades.filter(g => g.level === selectedGrade).length}
-                </div>
-              </>
-            )}
-          </div>
-        </div>
       </div>
 
       {/* Mobile Toggle Handle - только для мобильных */}

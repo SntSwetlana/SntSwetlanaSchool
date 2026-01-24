@@ -1,3 +1,6 @@
+:root {
+  --app-header-height: 82px; /* 52 + 15 + 15 */
+}
 /* AppHeader.css */
 .app-header {
   background: white;

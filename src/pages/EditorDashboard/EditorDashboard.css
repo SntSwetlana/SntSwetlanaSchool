@@ -1,8 +1,38 @@
-/* Additional CSS for expanded workspace */
+:root {
+  --app-header-height: 96px;
+  --sidebar-collapsed: 65px;
+  --sidebar-expanded: 180px;
+}
 
-/* Контейнер для таблицы */
+.dashboard-main {
+  box-sizing: border-box;
+  padding: 20px;
+
+  /* базово (collapsed) */
+  margin-left: var(--sidebar-collapsed);
+  width: calc(100% - var(--sidebar-collapsed));
+
+  /* чтобы занимал оставшуюся высоту под sticky header */
+  min-height: calc(100vh - var(--app-header-height));
+
+  transition: margin-left 0.25s cubic-bezier(0.4,0,0.2,1),
+              width 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* expanded */
+.dashboard-main.sidebar-expanded {
+  margin-left: var(--sidebar-expanded);
+  width: calc(100% - var(--sidebar-expanded));
+}
+
+/* collapsed */
+.dashboard-main.sidebar-collapsed {
+  margin-left: var(--sidebar-collapsed);
+  width: calc(100% - var(--sidebar-collapsed));
+}
 .table-container {
   width: 100%;
+  max-width: 100%;
   overflow-x: auto;
   background: white;
   border-radius: 8px;
@@ -45,7 +75,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .expand-sidebar-button:hover {
@@ -76,151 +106,37 @@
   color: #2d3748;
 }
 
-/* Адаптация таблицы под расширенную ширину */
 .assignment-table {
   min-width: 100%;
+  table-layout: auto;
 }
 
-/* Оптимизация для свернутого состояния */
-/*.dashboard-main.sidebar-collapsed {
-  margin-left: 70px;
-}
-
-.dashboard-main.sidebar-expanded {
-  margin-left: 280px;
-}*/
-
-/* expanded */
-.dashboard-main.sidebar-expanded {
-  padding-left: calc(280px + 20px);
-  width: calc(100% - 280px);
-}
-
-/* collapsed */
-.dashboard-main.sidebar-collapsed {
-  padding-left: calc(80px + 20px);
-  width: calc(100% - 80px);
-}
-
-/* Мобильная адаптация */
+/* Mobile */
 @media (max-width: 768px) {
   .dashboard-main {
-    margin-left: 0 !important;
     padding: 15px;
+    padding-left: 15px; /* на мобильном sidebar приходит поверх, отступ не нужен */
+    padding-top: 60px;  /* если есть mobile-handle/верхняя панель */
   }
-  
+
   .grade-info-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 15px;
   }
-  
+
   .expand-sidebar-button {
     width: 100%;
     justify-content: center;
   }
-  
+
   .grade-info-stats {
     flex-direction: column;
     gap: 15px;
   }
-  
+
   .table-container {
-    margin: 0 -15px;
-    width: calc(100% + 30px);
-    border-radius: 0;
+    margin: 0;
+    border-radius: 8px;
   }
-}
-
-/* EditorDashboard.css - добавьте эти стили */
-
-/* Стили для основного контента */
-.editor-dashboard.admin-layout {
-  display: flex;
-  min-height: 100vh;
-  background: #f5f7fa;
-  position: relative;
-  overflow: hidden; /* Предотвращаем горизонтальный скролл */
-  /*transition: padding-left 0.3s ease;*/
-}
-
-/* Основное содержимое - адаптируется под ширину сайдбара */
-.dashboard-main {
-  flex: 1;
-  padding: 20px;
-  padding-left: calc(280px + 20px); /* sidebar + padding */
-  transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  min-height: 100vh;
-  width: calc(100% - 280px);/*width: 100%;*/
-  box-sizing: border-box;
-}
-
-/* Когда сайдбар свернут */
-.editor-dashboard.admin-layout .grade-sidebar.collapsed + .dashboard-main {
-  margin-left: 80px;
-  width: calc(100% - 80px);
-}
-
-/* Когда сайдбар свернут и наведен - возвращаем отступ */
-/*.editor-dashboard.admin-layout .grade-sidebar.collapsed:hover + .dashboard-main {
-  margin-left: 280px;
-  width: calc(100% - 280px);
-}*/
-
-/* Когда сайдбар свернут */
-/*.grade-sidebar.collapsed ~ .dashboard-main {
-  padding-left: calc(80px + 20px);
-}
-*/
-/* Когда сайдбар свернут и наведен - возвращаем отступ */
-/*.grade-sidebar.collapsed:hover ~ .dashboard-main {
-  padding-left: calc(280px + 20px);
-}*/
-
-/* Мобильная версия основного контента */
-@media (max-width: 768px) {
-  .dashboard-main {
-    padding-left: 20px !important;
-    padding-top: 60px; /* Для мобильного handle */
-  }
-  
-  .grade-sidebar.mobile.expanded ~ .dashboard-main {
-    padding-left: calc(280px + 20px);
-  }
-  
-  /* Когда sidebar открыт на мобильном */
-  .grade-sidebar.mobile.expanded ~ .dashboard-main {
-    pointer-events: none;
-    user-select: none;
-  }
-  
-  .grade-sidebar.mobile.expanded ~ .dashboard-main::after {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 280px;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-  }
-}
-
-/* Для очень широких экранов */
-@media (min-width: 1600px) {
-  .dashboard-main {
-    max-width: none;
-  }
-}
-
-/* Убедимся, что таблица использует всю ширину */
-.table-container {
-  width: 100%;
-  max-width: 100%;
-  overflow-x: auto;
-}
-
-.assignment-table {
-  min-width: 100%;
-  table-layout: auto;
 }
