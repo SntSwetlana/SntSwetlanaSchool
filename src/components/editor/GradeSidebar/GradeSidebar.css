@@ -1,6 +1,6 @@
 :root {
   --app-header-height: 96px;
-  --sidebar-collapsed: 65px;
+  --sidebar-collapsed: 78px;
   --sidebar-expanded: 180px;
 }
 /* Grade Sidebar Styles */
@@ -75,10 +75,10 @@
 
 
 .grade-item {
-  margin: 0;  
+  margin: 0px 0px;  
   width: 100%;
   min-height: 48px;
-  padding: 0px;
+  padding: 8px 8px;
 
   display: flex;
   align-items: center;

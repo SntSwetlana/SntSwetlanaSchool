@@ -3,6 +3,8 @@ import AssignmentTable from '../../components/editor/AssignmentTable';
 import FilterPanel from '../../components/editor/FilterPanel';
 import GradeSidebar from '../../components/editor/GradeSidebar';
 import AssignmentModal from '../../components/editor/AssignmentModal';
+import LibraryPanel from '../../components/editor/LibraryPanel';
+import type { Publisher } from '../../../types/libraries';
 import './EditorDashboard.css';
 
 type Assignment = {
@@ -47,7 +49,9 @@ const EditorDashboard: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
+  const [publishers, setPublishers] = useState<Publisher[]>([]);  
+  const [libraryLoading, setLibraryLoading] = useState(false);
+  const [libraryError, setLibraryError] = useState<string | null>(null);
   const [assignments, setAssignments] = useState<Assignment[]>([
     // 
   ]);
@@ -57,19 +61,20 @@ const EditorDashboard: React.FC = () => {
   ]);
 
   const [grades, setGrades] = useState<Grade[]>([
-    { id: '1', level: 0, name: 'Kindergarten', ageRange: { min: 5, max: 6 }, createdAt: new Date(), updatedAt: new Date() },
-    { id: '2', level: 1, name: '1st Grade', ageRange: { min: 6, max: 7 }, createdAt: new Date(), updatedAt: new Date() },
-    { id: '3', level: 2, name: '2nd Grade', ageRange: { min: 7, max: 8 }, createdAt: new Date(), updatedAt: new Date() },
-    { id: '4', level: 3, name: '3rd Grade', ageRange: { min: 8, max: 9 }, createdAt: new Date(), updatedAt: new Date() },
-    { id: '5', level: 4, name: '4th Grade', ageRange: { min: 9, max: 10 }, createdAt: new Date(), updatedAt: new Date() },
-    { id: '6', level: 5, name: '5th Grade', ageRange: { min: 10, max: 11 }, createdAt: new Date(), updatedAt: new Date() },
-    { id: '7', level: 6, name: '6th Grade', ageRange: { min: 11, max: 12 }, createdAt: new Date(), updatedAt: new Date() },
-    { id: '8', level: 7, name: '7th Grade', ageRange: { min: 12, max: 13 }, createdAt: new Date(), updatedAt: new Date() },
-    { id: '9', level: 8, name: '8th Grade', ageRange: { min: 13, max: 14 }, createdAt: new Date(), updatedAt: new Date() },
-    { id: '10', level: 9, name: '9th Grade', ageRange: { min: 14, max: 15 }, createdAt: new Date(), updatedAt: new Date() },
-    { id: '11', level: 10, name: '10th Grade', ageRange: { min: 15, max: 16 }, createdAt: new Date(), updatedAt: new Date() },
-    { id: '12', level: 11, name: '11th Grade', ageRange: { min: 16, max: 17 }, createdAt: new Date(), updatedAt: new Date() },
-    { id: '13', level: 12, name: '12th Grade', ageRange: { min: 17, max: 18 }, createdAt: new Date(), updatedAt: new Date() },
+    { id: '1', level: 0, name: 'Pre-K', ageRange: { min: 4, max: 5 }, createdAt: new Date(), updatedAt: new Date() },
+    { id: '2', level: 0, name: 'Kindergarten', ageRange: { min: 5, max: 6 }, createdAt: new Date(), updatedAt: new Date() },
+    { id: '3', level: 1, name: '1st Grade', ageRange: { min: 6, max: 7 }, createdAt: new Date(), updatedAt: new Date() },
+    { id: '4', level: 2, name: '2nd Grade', ageRange: { min: 7, max: 8 }, createdAt: new Date(), updatedAt: new Date() },
+    { id: '5', level: 3, name: '3rd Grade', ageRange: { min: 8, max: 9 }, createdAt: new Date(), updatedAt: new Date() },
+    { id: '6', level: 4, name: '4th Grade', ageRange: { min: 9, max: 10 }, createdAt: new Date(), updatedAt: new Date() },
+    { id: '7', level: 5, name: '5th Grade', ageRange: { min: 10, max: 11 }, createdAt: new Date(), updatedAt: new Date() },
+    { id: '8', level: 6, name: '6th Grade', ageRange: { min: 11, max: 12 }, createdAt: new Date(), updatedAt: new Date() },
+    { id: '9', level: 7, name: '7th Grade', ageRange: { min: 12, max: 13 }, createdAt: new Date(), updatedAt: new Date() },
+    { id: '10', level: 8, name: '8th Grade', ageRange: { min: 13, max: 14 }, createdAt: new Date(), updatedAt: new Date() },
+    { id: '11', level: 9, name: '9th Grade', ageRange: { min: 14, max: 15 }, createdAt: new Date(), updatedAt: new Date() },
+    { id: '12', level: 10, name: '10th Grade', ageRange: { min: 15, max: 16 }, createdAt: new Date(), updatedAt: new Date() },
+    { id: '13', level: 11, name: '11th Grade', ageRange: { min: 16, max: 17 }, createdAt: new Date(), updatedAt: new Date() },
+    { id: '14', level: 12, name: '12th Grade', ageRange: { min: 17, max: 18 }, createdAt: new Date(), updatedAt: new Date() },
   ]);
 
   const [filteredAssignments, setFilteredAssignments] = useState<Assignment[]>([]);
@@ -77,6 +82,44 @@ const EditorDashboard: React.FC = () => {
   const [isAssignmentModalOpen, setIsAssignmentModalOpen] = useState(false);
   const [editingAssignment, setEditingAssignment] = useState<Assignment | null>(null);
 
+useEffect(() => {
+  const loadPublishers = async () => {
+    try {
+      setLibraryLoading(true);
+      setLibraryError(null);
+
+      const res = await fetch('/api/library/publishers', {
+        method: 'GET',
+        credentials: 'include',
+      });
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const json: unknown = await res.json();
+
+      // сервер может вернуть либо массив, либо объект { publishers: [...] }
+      if (Array.isArray(json)) {
+        setPublishers(json as Publisher[]);
+      } else if (
+        json &&
+        typeof json === 'object' &&
+        Array.isArray((json as any).publishers)
+      ) {
+        setPublishers((json as any).publishers as Publisher[]);
+      } else {
+        setPublishers([]);
+        setLibraryError('Unexpected response shape from /api/library/publishers');
+      }
+    } catch (e) {
+      setLibraryError(e instanceof Error ? e.message : 'Failed to load library');
+      setPublishers([]);
+    } finally {
+      setLibraryLoading(false);
+    }
+  };
+
+  loadPublishers();
+}, []);
   // Определяем мобильное устройство
   useEffect(() => {
     const handleResize = () => {
@@ -183,6 +226,9 @@ const EditorDashboard: React.FC = () => {
       {/* Основное содержимое - автоматически расширяется */}
       <div className={`dashboard-main ${isSidebarCollapsed ? 'sidebar-collapsed' : 'sidebar-expanded'}`}>
         {/* Панель фильтров */}
+        
+        <LibraryPanel publishers={publishers} />
+
         <FilterPanel
           subjects={subjects}
           selectedSubject={selectedSubject}
