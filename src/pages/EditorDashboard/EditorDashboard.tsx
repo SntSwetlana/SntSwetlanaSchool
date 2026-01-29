@@ -4,7 +4,7 @@ import FilterPanel from '../../components/editor/FilterPanel';
 import GradeSidebar from '../../components/editor/GradeSidebar';
 import AssignmentModal from '../../components/editor/AssignmentModal';
 import LibraryPanel from '../../components/editor/LibraryPanel';
-import type { Publisher } from '../../../types/libraries';
+import type { Publisher } from '../../types/libraries';
 import './EditorDashboard.css';
 
 type Assignment = {

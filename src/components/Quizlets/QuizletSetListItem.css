@@ -1,0 +1,49 @@
+.qz-tile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: #fff;
+  border: 1px solid #eef0f3;
+  border-radius: 16px;
+  padding: 14px 16px;
+  box-shadow: 0 1px 0 rgba(17, 24, 39, 0.04);
+}
+
+.qz-tile-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #111827;
+  line-height: 1.2;
+}
+
+.qz-tile-sub {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.qz-tile-desc {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #374151;
+}
+
+.qz-tile-actions {
+  display: flex;
+  align-items: center;
+}
+
+.qz-tile-btn {
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.qz-tile-btn:hover {
+  background: #f9fafb;
+}

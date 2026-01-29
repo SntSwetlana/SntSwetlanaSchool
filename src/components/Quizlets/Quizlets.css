@@ -1,0 +1,120 @@
+/* Quizlets.css */
+
+.quizlets {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 81.25rem;
+  padding: 0 3rem;
+}
+
+@media (max-width: 48rem) {
+  .quizlets {
+    padding: 0 1rem;
+  }
+}
+.qz-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.qz-main {
+  flex: 1;
+  padding: 18px 18px 60px;
+}
+
+/* можно чуть расширять контент когда сайдбар свернут */
+.qz-main.is-wide {
+  padding-left: 24px;
+}
+
+.quizlets-title {
+  font-weight: 700;
+  font-size: 2rem;
+  letter-spacing: normal;
+  line-height: 1.25;
+  color: #0f172a;
+  padding-bottom: 0.5rem;
+  margin-top: 2.5rem;
+}
+
+@media (max-width: 48rem) {
+  .quizlets-title {
+    padding-bottom: 2rem;
+    margin-top: 2rem;
+  }
+}
+
+@media (max-width: 28.75rem) {
+  .quizlets-title {
+    padding-bottom: 1.5rem;
+  }
+}
+
+.quizlets-tabs-wrap {
+  display: flex;
+  width: 100%;
+}
+
+.quizlets-tabs {
+  display: flex;
+  gap: 28px;
+  width: 100%;
+  max-width: fit-content;
+  padding: 1rem 0 0 0;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.12);
+}
+
+@media (max-width: 48rem) {
+  .quizlets-tabs {
+    padding: 1rem 0;
+  }
+}
+
+.AssemblyTab.quizlets-tab {
+  position: relative;
+  padding: 10px 0;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: border-color 160ms ease, color 160ms ease;
+  color: #939bb4;
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.AssemblyTab.quizlets-tab > a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.AssemblyTab.quizlets-tab:hover {
+  color: rgba(15, 23, 42, 0.92);
+  border-bottom-color: #144d05;
+}
+
+.AssemblyTab.quizlets-tab[aria-selected="true"],
+.AssemblyTab.quizlets-tab.is-active {
+  color: #0f172a;
+  border-bottom-color: #144d05;
+}
+
+.AssemblyTab.quizlets-tab:focus-visible,
+.AssemblyTab.quizlets-tab > a:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.35);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+.quizlets-content {
+  padding-top: 20px;
+  width: 100%;
+}
+
+.quizlets-h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #0f172a;
+}

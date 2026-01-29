@@ -1,6 +1,6 @@
 /*import React, { useEffect, useState } from 'react';*/
 import React, { Suspense, lazy, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate  } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, data  } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
 import { AuthProvider } from './providers/AuthProvider';
 //import { ProtectedRoute } from '@/components/ProtectedRoute/';
@@ -30,6 +30,7 @@ const TutorDashboard = lazy(() => import('./pages/TutorDashboard'));
 const StudentDashboard = lazy(() => import('./pages/StudentDashboard'));
 const EditorDashboard = lazy(() => import('./pages/EditorDashboard'));
 const GuestDashboard = lazy(() => import('./pages/GuestDashboard'));
+const TestDashboard = lazy(() => import('./pages/TestDashboard'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
@@ -174,6 +175,7 @@ function AppRoutes() {
         } />
 
         <Route path="/guest/*" element={<GuestDashboard />} />
+        <Route path="/test/*" element={<TestDashboard name={"Guest"} />} />
         
         {/* Общие защищенные маршруты */}
         <Route path="/profile" element={
