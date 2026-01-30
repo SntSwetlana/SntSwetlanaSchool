@@ -15,8 +15,10 @@ type SortMode = "recent" | "title";
 
 export default function QuizletSetsList({
     onOpen,
+    onCreate,
     }: {
     onOpen: (setId: string, slug: string) => void;
+    onCreate: (setId: string, slug: string) => void;
     }) {
   const [items, setItems] = useState<QuizletSetListItem[]>([]);
   const [q, setQ] = useState("");
@@ -89,8 +91,28 @@ export default function QuizletSetsList({
           <button className="qzl-sortbtn" type="button" onClick={() => setSort(sort === "recent" ? "title" : "recent")}>
             {sort === "recent" ? "Recent" : "Title"} <span className="qzl-caret">▾</span>
           </button>
-          <button  className="qzl-add-set" type="button"> + Add Set</button>
-          <button  className="qzl-add-set" type="button"> + Add Folder</button>
+          <button  
+            className="qzl-add-set" 
+            type="button"
+            onClick={() => {
+              const raw = window.prompt("Set slug (например: spotlight-8-unit-1)", "new-set");
+              if (!raw) return;
+
+              const slug = raw
+                .trim()
+                .toLowerCase()
+                .replace(/['"]/g, "")
+                .replace(/[^a-z0-9]+/g, "-")
+                .replace(/^-+|-+$/g, "");
+
+              if (!slug) return;
+
+              const setId = crypto.randomUUID();
+              onCreate(setId, slug);
+            }}
+          >
+            + Add Set
+          </button>
         </div>
 
         <div className="qzl-search">

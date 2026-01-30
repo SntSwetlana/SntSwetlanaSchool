@@ -4,6 +4,7 @@ import QuizletSidebar from "./QuizletSidebar";
 import QuizletSetEditor from "./QuizletSetEditor";
 import QuizletSetViewer from "./QuizletSetViewer";
 import QuizletSetsList from "./QuizletSetsList";
+import QuizletFoldersList from "./QuizletFoldersList";
 
 const TABS = ["Flashcards", "Folders"] as const;
 type Tab = (typeof TABS)[number];
@@ -30,6 +31,10 @@ const Quizlets: React.FC<QuizletsProps> = ({ name }) => {
   }
 
   function openEdit() {
+    setMode("edit");
+  }
+  function createSet(setId: string, slug: string) {
+    setOpened({ id: setId, slug });
     setMode("edit");
   }
 
@@ -79,9 +84,15 @@ const Quizlets: React.FC<QuizletsProps> = ({ name }) => {
 
           <div className="quizlets-content">
             {active === "Flashcards" ? (
-              <QuizletSetsList onOpen={openViewer} />
+              <QuizletSetsList 
+                onOpen={openViewer} 
+                onCreate={createSet}
+              />
             ) : (
-              <div style={{ padding: 12 }}>Folders (пока пусто)</div>
+              <QuizletFoldersList onOpen={(folderId) => {
+                  console.log("Open folder", folderId);
+                  // здесь позже можно открыть FolderViewer
+                }} />
             )}
           </div>
         </>
@@ -111,7 +122,11 @@ const Quizlets: React.FC<QuizletsProps> = ({ name }) => {
           </button>
         </div>
 
-        <QuizletSetEditor setId={opened.id} slug={opened.slug} autoCreate={false} />
+        <QuizletSetEditor 
+          setId={opened.id} 
+          slug={opened.slug} 
+          autoCreate={true} 
+        />
       </>
     );
   })();

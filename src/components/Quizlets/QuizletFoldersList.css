@@ -1,0 +1,57 @@
+.qfl-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.qfl-search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.qfl-search input {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.qfl-sortbtn {
+  background: none;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.qfl-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.qfl-item {
+  text-align: left;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  cursor: pointer;
+  transition: box-shadow 0.15s ease;
+}
+
+.qfl-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.qfl-item-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.qfl-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0f172a;
+}

@@ -27,39 +27,94 @@ export default function QuizletSetEditor({ setId, slug, autoCreate = false }: { 
 
 
     useEffect(() => {
-      let cancelled = false;
+  let cancelled = false;
 
-      async function load() {
-        const res = await fetch(`/api/quizlet/sets/${setId}/full`, {
-          credentials: "include",
-        });
+  const defaultCards: CardDraft[] = [
+    { id: uid(), term: "", definition: "", imageFile: null },
+    { id: uid(), term: "", definition: "", imageFile: null },
+    { id: uid(), term: "", definition: "", imageFile: null },
+  ];
 
-        if (cancelled) return;
+  async function loadOrCreate() {
+    // 1) пробуем загрузить set + cards
+    const res = await fetch(`/api/quizlet/sets/${setId}/full`, {
+      credentials: "include",
+    });
 
-        if (!res.ok) {
-          setSaveState("error");
-          setSaveMsg(`Load failed: ${res.status}`);
-          return;
-        }
+    if (cancelled) return;
 
-        const data = await res.json();
-        setTitle(data.set.title ?? "");
-        setDescription(data.set.description ?? "");
-        setCards(
-          (data.cards ?? []).map((c: any) => ({
-            id: c.id,
-            term: c.term,
-            definition: c.explanation,
-            imageFile: null,
-          }))
-        );
+    if (res.ok) {
+      const data = await res.json();
+      setTitle(data.set.title ?? "");
+      setDescription(data.set.description ?? "");
+      setCards(
+        (data.cards ?? []).map((c: any) => ({
+          id: c.id,
+          term: c.term,
+          definition: c.explanation,
+          imageFile: null,
+        }))
+      );
+      setSaveState("idle");
+      setSaveMsg("");
+      return;
+    }
+
+    // 2) если не нашли — 404
+    if (res.status === 404) {
+      if (!autoCreate) {
+        setSaveState("error");
+        setSaveMsg("Set not found (404). Auto-create disabled.");
+        return;
       }
 
-      load();
-      return () => {
-        cancelled = true;
-      };
-    }, [setId]);
+      // создаём пустой set (upsert)
+      const upsert = await fetch(`/api/quizlet/sets/${setId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          slug,
+          title: slug,
+          description: null,
+          language_level: null,
+          textbook_id: null,
+          folder_id: null,
+          source_url: window.location.href,
+        }),
+      });
+
+      if (cancelled) return;
+
+      if (!upsert.ok) {
+        const text = await upsert.text().catch(() => "");
+        setSaveState("error");
+        setSaveMsg(`Create failed: ${upsert.status} ${text}`);
+        return;
+      }
+
+      // UI инициализация
+      setTitle(slug);
+      setDescription("");
+      setCards(defaultCards); // или [] если хочешь без примера
+      setSaveState("idle");
+      setSaveMsg("");
+      return;
+    }
+
+    // 3) любая другая ошибка
+    const text = await res.text().catch(() => "");
+    setSaveState("error");
+    setSaveMsg(`Load failed: ${res.status} ${text}`);
+  }
+
+  loadOrCreate();
+
+  return () => {
+    cancelled = true;
+  };
+}, [setId, slug, autoCreate]);
+
 
     async function onDone() {
     // 1) сохранить set
