@@ -1,4 +1,3 @@
-import React from "react";
 import "./QuizletSetTile.css";
 
 export type QuizletSetListItem = {

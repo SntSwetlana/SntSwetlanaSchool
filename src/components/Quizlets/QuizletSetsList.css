@@ -61,24 +61,37 @@
 }
 
 .qzl-list {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 12px;
 }
 
 .qzl-item {
+    box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .08);
+    transition: all .12s cubic-bezier(.47, 0, .745, .715);
+    background-color: var(--gray-100-gray-700);
+    border-bottom: .25rem solid rgba(255, 255, 255, 0);
+    border-radius: .5rem;
+    cursor: pointer;
+    position: relative;
+    padding: 0;
+
   width: 100%;
   text-align: left;
-  border: 1px solid #eef0f3;
   background: #fff;
-  border-radius: 14px;
   padding: 14px 16px;
-  cursor: pointer;
-  box-shadow: 0 1px 0 rgba(17, 24, 39, 0.04);
+  
+/*  box-shadow: 0 1px 0 rgba(17, 24, 39, 0.04);*/
 }
 
 .qzl-item:hover {
-  box-shadow: 0 6px 18px rgba(17, 24, 39, 0.08);
+  border-color: #144d05;/* #646cff;*/
+  box-shadow: 0 6px 18px rgba(20, 77, 5, 0.08);
   transform: translateY(-1px);
+}
+.qzl-item:focus {
+  outline: 2px solid #144d05; /* currentColor или как у тебя в дизайне */
+  outline-offset: 2px;
 }
 
 .qzl-item-top {
@@ -126,8 +139,8 @@
 
 .qzl-title {
   margin-top: 6px;
-  font-size: 18px;
-  font-weight: 900;
+  font-size: 1.25rem;
+  font-weight: 700;
   color: #111827;
 }
 

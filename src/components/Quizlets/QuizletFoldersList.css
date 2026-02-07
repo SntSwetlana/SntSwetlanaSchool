@@ -5,15 +5,27 @@
 }
 
 .qfl-search {
+  flex: 1;
+  max-width: 560px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid #eef0f3;
 }
 
 .qfl-search input {
-  padding: 6px 10px;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  color: #111827;
+}
+
+.qfl-search-ico {
+  opacity: 0.65;
 }
 
 .qfl-sortbtn {
@@ -30,28 +42,269 @@
 }
 
 .qfl-item {
-  text-align: left;
-  padding: 14px 16px;
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
-  background: white;
+  box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .08);
+  transition: all .12s cubic-bezier(.47, 0, .745, .715);
+  background-color: var(--gray-100-gray-700);
+  border-bottom: .25rem solid rgba(255, 255, 255, 0);
+  border-radius: .5rem;
   cursor: pointer;
-  transition: box-shadow 0.15s ease;
+  position: relative;
+  padding: 0;
+
+  width: 100%;
+  text-align: left;
+  background: #fff;
+  padding: 14px 16px;
 }
 
 .qfl-item:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-color: #144d05;/* #646cff;*/
+  box-shadow: 0 6px 18px rgba(20, 77, 5, 0.08);
+  transform: translateY(-1px);
 }
 
 .qfl-item-top {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  font-size: 13px;
-  color: #64748b;
+  gap: 12px;
 }
 
+.qfl-item:focus {
+  outline: 2px solid #144d05; /* currentColor или как у тебя в дизайне */
+  outline-offset: 2px;
+}
 .qfl-title {
   font-size: 16px;
   font-weight: 600;
   color: #0f172a;
+}
+
+.qfl-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.qfl-iconbtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  opacity: 0.6;
+  padding: 4px;
+  border-radius: 6px;
+  transition: background 0.15s ease, opacity 0.15s ease;
+}
+
+.qfl-iconbtn:hover {
+  background: rgba(0, 0, 0, 0.06);
+  opacity: 1;
+}
+.qfl-folderblock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.qfl-expand {
+  margin-left: 8px;
+  opacity: 0.7;
+}
+
+.qfl-setsPanel {
+  margin-left: 8px;
+  padding: 10px 12px;
+  border-left: 2px solid rgba(255,255,255,0.12);
+}
+
+.qfl-setsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.qfl-setRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  /* фон/бордер под стиль твоих item */
+}
+
+.qfl-setMain {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.qfl-setTitle {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.qfl-setMeta {
+  font-size: 12px;
+  opacity: 0.75;
+}
+/* empty state */
+.qfl-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 22px 12px;
+  gap: 10px;
+}
+
+.qfl-emptyAdd {
+  width: 54px;
+  height: 54px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.15);
+  background: white;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.qfl-emptyAdd:hover {
+  transform: translateY(-1px);
+}
+
+.qfl-plus {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.qfl-emptyText {
+  opacity: 0.7;
+  font-size: 14px;
+}
+
+/* modal */
+.qfl-modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  display: grid;
+  place-items: center;
+  z-index: 999;
+}
+
+.qfl-modal {
+  width: min(720px, calc(100vw - 32px));
+  max-height: min(640px, calc(100vh - 32px));
+  background: white;
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.qfl-modalHeader, .qfl-modalFooter {
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+.qfl-modalFooter {
+  border-bottom: none;
+  border-top: 1px solid rgba(0,0,0,0.08);
+  justify-content: flex-end;
+}
+
+.qfl-modalTitle {
+  font-weight: 700;
+}
+
+.qfl-modalBody {
+  padding: 12px 14px;
+  overflow: auto;
+}
+
+.qfl-pickList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.qfl-pickRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.08);
+  cursor: pointer;
+}
+
+.qfl-pickRow:hover {
+  background: rgba(0,0,0,0.02);
+}
+
+.qfl-pickMain {
+  min-width: 0;
+}
+
+.qfl-pickTitle {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.qfl-pickMeta {
+  font-size: 12px;
+  opacity: 0.7;
+}
+.qfl-pickSearch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 10px;
+  border: 1px solid rgba(0,0,0,0.10);
+  border-radius: 12px;
+  margin-bottom: 12px;
+  background: white;
+}
+
+.qfl-pickSearch input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font: inherit;
+  background: transparent;
+}
+
+.qfl-setRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 10px;
+}
+
+.qfl-setClick {
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.qfl-setRow:hover {
+  background: rgba(0,0,0,0.02);
+}
+
+.qfl-setClick:focus {
+  outline: 2px solid #16a34a;
+  outline-offset: 2px;
+  border-radius: 10px;
 }

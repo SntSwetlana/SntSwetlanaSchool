@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./Quizlets.css";
 import QuizletSetEditor from "./QuizletSetEditor";
-import QuizletSetTile, { QuizletSetListItem } from "./QuizletSetTile";
 
 type View =
   | { kind: "list" }
@@ -9,7 +8,6 @@ type View =
 
 export default function QuizletFolderItem({ name }: { name: string }) {
   const [view, setView] = useState<View>({ kind: "list" });
-  const [items, setItems] = useState<QuizletSetListItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
 
@@ -19,8 +17,6 @@ export default function QuizletFolderItem({ name }: { name: string }) {
     try {
       const res = await fetch("/api/quizlet/sets", { credentials: "include" });
       if (!res.ok) throw new Error(`Load sets failed: ${res.status}`);
-      const data = await res.json();
-      setItems(data.items ?? data); // подстрой под свой JSON
     } catch (e: any) {
       setError(e?.message ?? "Failed");
     } finally {
@@ -31,10 +27,6 @@ export default function QuizletFolderItem({ name }: { name: string }) {
   useEffect(() => {
     if (view.kind === "list") loadSets();
   }, [view.kind]);
-
-  function openSet(setId: string, slug: string) {
-    setView({ kind: "editor", setId, slug });
-  }
 
   function backToList() {
     setView({ kind: "list" });
@@ -52,7 +44,6 @@ export default function QuizletFolderItem({ name }: { name: string }) {
             </div>
 
             <div className="quizlets-toolbar-right">
-              {/* тут оставишь свой CreateSetForm / Add set */}
               <button className="quizlets-btn" type="button" onClick={loadSets}>
                 Refresh
               </button>
@@ -63,9 +54,6 @@ export default function QuizletFolderItem({ name }: { name: string }) {
           {error && <div style={{ padding: 12, color: "#b91c1c" }}>{error}</div>}
 
           <div style={{ display: "grid", gap: 12, marginTop: 12 }}>
-            {items.map((it) => (
-              <QuizletSetTile key={it.id} item={it} onOpen={openSet} />
-            ))}
           </div>
         </>
       )}

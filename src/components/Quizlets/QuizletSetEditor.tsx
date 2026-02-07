@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./QuizletSetEditor.css";
 
 type CardDraft = {
@@ -14,6 +14,7 @@ function createEmptyCard(): CardDraft {
   return { id: uid(), term: "", definition: "", imageFile: null };
 }
 
+
 export default function QuizletSetEditor({ setId, slug, autoCreate = false }: { setId: string; slug: string, autoCreate?: boolean }) {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -25,182 +26,182 @@ export default function QuizletSetEditor({ setId, slug, autoCreate = false }: { 
     const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
     const [saveMsg, setSaveMsg] = useState<string>("");
 
+    const [importOpen, setImportOpen] = useState(false);
+    const [importText, setImportText] = useState("");
+    const [termSep, setTermSep] = useState<"tab" | "comma" | "custom">("tab");
+    const [cardSep, setCardSep] = useState<"newline" | "semicolon" | "custom">("newline");
+    const [customTermSep, setCustomTermSep] = useState("|");
+    const [customCardSep, setCustomCardSep] = useState(";");
+
 
     useEffect(() => {
-  let cancelled = false;
+    let cancelled = false;
 
-  const defaultCards: CardDraft[] = [
-    { id: uid(), term: "", definition: "", imageFile: null },
-    { id: uid(), term: "", definition: "", imageFile: null },
-    { id: uid(), term: "", definition: "", imageFile: null },
-  ];
+    const defaultCards: CardDraft[] = [
+      { id: uid(), term: "", definition: "", imageFile: null },
+      { id: uid(), term: "", definition: "", imageFile: null },
+      { id: uid(), term: "", definition: "", imageFile: null },
+    ];
 
-  async function loadOrCreate() {
-    // 1) пробуем загрузить set + cards
-    const res = await fetch(`/api/quizlet/sets/${setId}/full`, {
-      credentials: "include",
-    });
+    async function loadOrCreate() {
+      const res = await fetch(`/api/quizlet/sets/${setId}/full`, {
+        credentials: "include",
+      });
 
-    if (cancelled) return;
+      if (cancelled) return;
 
-    if (res.ok) {
-      const data = await res.json();
-      setTitle(data.set.title ?? "");
-      setDescription(data.set.description ?? "");
-      setCards(
-        (data.cards ?? []).map((c: any) => ({
-          id: c.id,
-          term: c.term,
-          definition: c.explanation,
-          imageFile: null,
-        }))
-      );
-      setSaveState("idle");
-      setSaveMsg("");
-      return;
-    }
-
-    // 2) если не нашли — 404
-    if (res.status === 404) {
-      if (!autoCreate) {
-        setSaveState("error");
-        setSaveMsg("Set not found (404). Auto-create disabled.");
+      if (res.ok) {
+        const data = await res.json();
+        setTitle(data.set.title ?? "");
+        setDescription(data.set.description ?? "");
+        setCards(
+          (data.cards ?? []).map((c: any) => ({
+            id: c.id,
+            term: c.term,
+            definition: c.explanation,
+            imageFile: null,
+          }))
+        );
+        setSaveState("idle");
+        setSaveMsg("");
         return;
       }
 
-      // создаём пустой set (upsert)
-      const upsert = await fetch(`/api/quizlet/sets/${setId}`, {
+      if (res.status === 404) {
+        if (!autoCreate) {
+          setSaveState("error");
+          setSaveMsg("Set not found (404). Auto-create disabled.");
+          return;
+        }
+
+        const upsert = await fetch(`/api/quizlet/sets/${setId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            slug,
+            title: slug,
+            description: null,
+            language_level: null,
+            textbook_id: null,
+            folder_id: null,
+            source_url: window.location.href,
+            }),
+          });
+
+          if (cancelled) return;
+
+          if (!upsert.ok) {
+            const text = await upsert.text().catch(() => "");
+            setSaveState("error");
+            setSaveMsg(`Create failed: ${upsert.status} ${text}`);
+            return;
+          }
+
+          setTitle(slug);
+          setDescription("");
+          setCards(defaultCards); // или [] если хочешь без примера
+          setSaveState("idle");
+          setSaveMsg("");
+          return;
+        }
+
+        const text = await res.text().catch(() => "");
+        setSaveState("error");
+        setSaveMsg(`Load failed: ${res.status} ${text}`);
+      }
+
+      loadOrCreate();
+
+      return () => {
+        cancelled = true;
+      };
+    }, [setId, slug, autoCreate]);
+
+    useEffect(() => {
+      console.log("cards updated:", cards.length);
+    }, [cards]);
+
+      async function onDone() {
+      await fetch(`/api/quizlet/sets/${setId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
           slug,
-          title: slug,
-          description: null,
+          title,
+          description,
           language_level: null,
-          textbook_id: null,
-          folder_id: null,
-          source_url: window.location.href,
         }),
       });
 
-      if (cancelled) return;
-
-      if (!upsert.ok) {
-        const text = await upsert.text().catch(() => "");
-        setSaveState("error");
-        setSaveMsg(`Create failed: ${upsert.status} ${text}`);
-        return;
+        await fetch(`/api/quizlet/sets/${setId}/cards:replace`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            cards: cards
+              .map((c) => ({
+                term: c.term.trim(),
+                explanation: c.definition.trim(),
+              }))
+              .filter((c) => c.term && c.explanation),
+          }),
+        });
       }
+      async function onSave() {
+      try {
+          setSaveState("saving");
+          setSaveMsg("");
 
-      // UI инициализация
-      setTitle(slug);
-      setDescription("");
-      setCards(defaultCards); // или [] если хочешь без примера
-      setSaveState("idle");
-      setSaveMsg("");
-      return;
-    }
+          const setRes = await fetch(`/api/quizlet/sets/${setId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+              slug,               
+              title,
+              description: description || null,
+              language_level: null,
+              source_url: window.location.href,
+          }),
+          });
 
-    // 3) любая другая ошибка
-    const text = await res.text().catch(() => "");
-    setSaveState("error");
-    setSaveMsg(`Load failed: ${res.status} ${text}`);
-  }
+          if (!setRes.ok) {
+          const text = await setRes.text().catch(() => "");
+          throw new Error(`Set save failed: ${setRes.status} ${text}`);
+          }
 
-  loadOrCreate();
-
-  return () => {
-    cancelled = true;
-  };
-}, [setId, slug, autoCreate]);
-
-
-    async function onDone() {
-    // 1) сохранить set
-    await fetch(`/api/quizlet/sets/${setId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({
-        slug,
-        title,
-        description,
-        language_level: null,
-      }),
-    });
-
-    // 2) заменить карточки целиком
-    await fetch(`/api/quizlet/sets/${setId}/cards:replace`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({
-        cards: cards
+          const payloadCards = cards
           .map((c) => ({
-            term: c.term.trim(),
-            explanation: c.definition.trim(),
+              term: c.term.trim(),
+              explanation: c.definition.trim(),
           }))
-          .filter((c) => c.term && c.explanation),
-      }),
-    });
-  }
-    async function onSave() {
-    try {
-        setSaveState("saving");
-        setSaveMsg("");
+          .filter((c) => c.term && c.explanation);
 
-        // 1) upsert set
-        const setRes = await fetch(`/api/quizlet/sets/${setId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-            slug,                // важно: slug передай пропсом
-            title,
-            description: description || null,
-            language_level: null,
-            source_url: window.location.href,
-        }),
-        });
+          const cardsRes = await fetch(`/api/quizlet/sets/${setId}/cards:replace`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ cards: payloadCards }),
+          });
 
-        if (!setRes.ok) {
-        const text = await setRes.text().catch(() => "");
-        throw new Error(`Set save failed: ${setRes.status} ${text}`);
-        }
+          if (!cardsRes.ok) {
+          const text = await cardsRes.text().catch(() => "");
+          throw new Error(`Cards save failed: ${cardsRes.status} ${text}`);
+          }
 
-        // 2) replace cards
-        const payloadCards = cards
-        .map((c) => ({
-            term: c.term.trim(),
-            explanation: c.definition.trim(),
-        }))
-        .filter((c) => c.term && c.explanation);
+          setSaveState("saved");
+          setSaveMsg(`Saved: ${payloadCards.length} cards`);
 
-        const cardsRes = await fetch(`/api/quizlet/sets/${setId}/cards:replace`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ cards: payloadCards }),
-        });
-
-        if (!cardsRes.ok) {
-        const text = await cardsRes.text().catch(() => "");
-        throw new Error(`Cards save failed: ${cardsRes.status} ${text}`);
-        }
-
-        setSaveState("saved");
-        setSaveMsg(`Saved: ${payloadCards.length} cards`);
-
-        // через 2.5с убираем "Saved"
-        window.setTimeout(() => {
-        setSaveState("idle");
-        setSaveMsg("");
-        }, 2500);
-    } catch (e: any) {
-        setSaveState("error");
-        setSaveMsg(e?.message ?? "Save failed");
-    }
+          window.setTimeout(() => {
+          setSaveState("idle");
+          setSaveMsg("");
+          }, 2500);
+      } catch (e: any) {
+          setSaveState("error");
+          setSaveMsg(e?.message ?? "Save failed");
+      }
     }
 
   const filteredCards = useMemo(() => {
@@ -223,13 +224,58 @@ export default function QuizletSetEditor({ setId, slug, autoCreate = false }: { 
     setCards((prev) => prev.filter((c) => c.id !== id));
   }
 
-  function importExample() {
-    // Заглушка: тут можно открыть модалку импорта/вставки текста
-    // Например: term — definition по строкам
-    alert("Import: сюда можно добавить импорт из текста/CSV.");
-  }
+function importExample() {
+  setImportOpen(true);
+}
+function parseImport() {
 
-  return (
+  const text = importText.trim();
+  if (!text) return;
+
+  const termDelimiter =
+    termSep === "tab" ? "\t" :
+    termSep === "comma" ? "-" :
+    customTermSep;
+
+  const cardDelimiter =
+    cardSep === "newline" ? "\n" :
+    cardSep === "semicolon" ? ";" :
+    customCardSep;
+
+    console.log("!!! Parsed card:", { importText });
+    console.log("termDelimiter", termDelimiter === "\t" ? "\\t" : termDelimiter);
+    console.log("cardDelimiter", cardDelimiter === "\n" ? "\\n" : cardDelimiter);
+
+  const parsed: CardDraft[] = text
+    .split(cardDelimiter)
+    .map((row) => row.trim())
+    .filter(Boolean)
+    .map((row) => {
+      const idx = row.indexOf(termDelimiter);
+      console.log("~~~ termDelimiter:", { termDelimiter });
+      console.log("~~~ Parsed card:", { row });
+      console.log("~~~ idx:", { idx });
+      if (idx === -1) return null;
+
+      const term = row.slice(0, idx).trim();
+      const definition = row.slice(idx + termDelimiter.length).trim();
+      console.log("!!! Parsed card:", { term, definition });
+
+      if (!term || !definition) return null;
+
+      return { id: uid(), term, definition, imageFile: null };
+    })
+    .filter(Boolean) as CardDraft[];
+
+  setCards(parsed);
+  setSearch("");
+
+  setImportOpen(false);
+  setImportText("");
+}
+
+
+return (
     <div className="qz-editor">
       {/* Top bar */}
       <div className="qz-topbar">
@@ -410,6 +456,56 @@ export default function QuizletSetEditor({ setId, slug, autoCreate = false }: { 
           </div>
         </div>
       </div>
+{importOpen && (
+  <div className="qz-import-overlay">
+    <div className="qz-import-modal">
+      <div className="qz-import-header">
+        <h3>Import your data</h3>
+        <button onClick={() => setImportOpen(false)}>✕</button>
+      </div>
+
+      <textarea
+        className="qz-import-textarea"
+        placeholder={"Word 1\tDefinition 1\nWord 2\tDefinition 2"}
+        value={importText}
+        onChange={(e) => setImportText(e.target.value)}
+      />
+
+      <div className="qz-import-options">
+        <div>
+          <h4>Between Term and Definition</h4>
+          <label><input type="radio" checked={termSep==="tab"} onChange={()=>setTermSep("tab")} /> Tab</label>
+          <label><input type="radio" checked={termSep==="comma"} onChange={()=>setTermSep("comma")} /> Comma</label>
+          <label>
+            <input type="radio" checked={termSep==="custom"} onChange={()=>setTermSep("custom")} />
+            Custom
+            {termSep==="custom" && (
+              <input value={customTermSep} onChange={e=>setCustomTermSep(e.target.value)} />
+            )}
+          </label>
+        </div>
+
+        <div>
+          <h4>Between cards</h4>
+          <label><input type="radio" checked={cardSep==="newline"} onChange={()=>setCardSep("newline")} /> New Line</label>
+          <label><input type="radio" checked={cardSep==="semicolon"} onChange={()=>setCardSep("semicolon")} /> Semicolon</label>
+          <label>
+            <input type="radio" checked={cardSep==="custom"} onChange={()=>setCardSep("custom")} />
+            Custom
+            {cardSep==="custom" && (
+              <input value={customCardSep} onChange={e=>setCustomCardSep(e.target.value)} />
+            )}
+          </label>
+        </div>
+      </div>
+
+      <div className="qz-import-footer">
+        <button className="qz-btn" onClick={() => setImportOpen(false)}>Cancel</button>
+        <button className="qz-btn qz-btn-primary" onClick={parseImport}>Import</button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 }

@@ -38,7 +38,42 @@ const Quizlets: React.FC<QuizletsProps> = ({ name }) => {
     setMode("edit");
   }
 
-  // ====== CONTENT SWITCHER ======
+
+  async function createFolder(folderId: string, title: string) {
+  const res = await fetch("/api/quizlet/folders", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ id: folderId, title }),
+  });
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    console.error("Create folder failed:", res.status, text);
+    return;
+  }
+}
+async function renameFolder(folderId: string, currentTitle: string) {
+  const title = window.prompt("New folder title", currentTitle);
+  if (!title || title.trim() === currentTitle) return;
+
+  await fetch(`/api/quizlet/folders/${folderId}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ title: title.trim() }),
+  });
+}
+
+async function openFolderViewer(folderId: string) {
+  console.log("open folder viewer:", folderId);
+}
+async function deleteFolder(folderId: string) {
+  await fetch(`/api/quizlet/folders/${folderId}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+}
   const content = (() => {
     if (mode === "list") {
       return (
@@ -89,10 +124,12 @@ const Quizlets: React.FC<QuizletsProps> = ({ name }) => {
                 onCreate={createSet}
               />
             ) : (
-              <QuizletFoldersList onOpen={(folderId) => {
-                  console.log("Open folder", folderId);
-                  // здесь позже можно открыть FolderViewer
-                }} />
+              <QuizletFoldersList 
+                  onOpen={openFolderViewer}
+                  onCreate={createFolder}
+                  onRename={renameFolder}
+                  onDelete={deleteFolder}
+                  onOpenSet={(setId, slug) => openViewer(setId, slug)} />
             )}
           </div>
         </>
@@ -131,7 +168,6 @@ const Quizlets: React.FC<QuizletsProps> = ({ name }) => {
     );
   })();
 
-  // ====== LAYOUT WITH SIDEBAR ALWAYS ======
   return (
     <div className="qz-layout">
       <QuizletSidebar initialCollapsed={true} onCollapsedChange={setCollapsed} />

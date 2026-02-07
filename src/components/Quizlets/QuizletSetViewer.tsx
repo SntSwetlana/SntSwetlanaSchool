@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import FlipCard from "./FlipCard";
 import "./QuizletSetViewer.css";
 
@@ -16,8 +16,8 @@ type ApiSet = {
 };
 
 type LearnQ = {
-  idx: number;                  // номер вопроса
-  prompt: string;               // показываем explanation (RU), выбираем term (EN)
+  idx: number;
+  prompt: string;
   correct: string;
   options: string[];
 };
@@ -25,12 +25,14 @@ type LearnQ = {
 
 export default function QuizletSetViewer({
   setId,
+  slug,
   onBack,
   onEdit,
   onDeleted,
 
 }: {
   setId: string;
+   slug: string;
   onBack: () => void;
   onEdit: () => void;
   onDeleted: () => void;
@@ -412,7 +414,7 @@ function dontKnow() {
       <button className="qsv-carousel-nav" type="button" aria-label="Prev">‹</button>
 
       <div className="qsv-carousel-track">
-        {/* TODO: сюда подставишь реальные “related sets” с бэка */}
+        {/* “related sets” */}
         {/* relatedSets.map((s) => (
           <div className="qsv-related" key={s.id}>
             <div className="qsv-related-title">{s.title}</div>

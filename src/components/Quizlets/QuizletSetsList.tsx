@@ -2,13 +2,13 @@ import React, { useEffect, useMemo, useState } from "react";
 import "./QuizletSetsList.css";
 
 export type QuizletSetListItem = {
-  id: string;            // UUID
+  id: string;
   slug: string;
   title: string;
-  owner_name?: string;   // если есть (можно пока null)
-  is_draft?: boolean;    // если хочешь показывать Draft
-  cards_count: number;   // важно для "N terms"
-  created_at?: string;   // для группировок (This week etc.)
+  owner_name?: string;
+  is_draft?: boolean; 
+  cards_count: number;
+  created_at?: string;
 };
 
 type SortMode = "recent" | "title";
@@ -63,6 +63,7 @@ export default function QuizletSetsList({
         }
     })();
     }, []);
+
   const filtered = useMemo(() => {
     const s = q.trim().toLowerCase();
     let list = items;
@@ -144,7 +145,6 @@ export default function QuizletSetsList({
                 <div className="qzl-terms">{it.cards_count} terms</div>
 
                 <div className="qzl-meta">
-                  {/* можно потом реального owner */}
                   <span className="qzl-avatar" aria-hidden="true"></span>
                   <span className="qzl-owner">{it.owner_name ?? "SntSwetlana"}</span>
                   <span className="qzl-pill">Teacher</span>
