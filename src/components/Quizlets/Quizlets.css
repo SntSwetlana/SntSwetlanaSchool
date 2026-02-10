@@ -21,7 +21,7 @@
 
 .qz-main {
   flex: 1;
-  padding: 18px 18px 60px;
+  padding: 18px 18px 0px;
 }
 
 .qz-main.is-wide {
@@ -34,7 +34,6 @@
   letter-spacing: normal;
   line-height: 1.25;
   color: #0f172a;
-  padding-bottom: 0.5rem;
   margin-top: 2.5rem;
 }
 

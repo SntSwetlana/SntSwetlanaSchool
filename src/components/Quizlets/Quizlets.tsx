@@ -137,7 +137,7 @@ async function deleteFolder(folderId: string) {
     }
 
     if (!opened) return null;
-
+    console.log("mode:", mode);
     if (mode === "view") {
       return (
         <QuizletSetViewer

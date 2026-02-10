@@ -71,7 +71,7 @@
 }
 
 .qfl-item:focus {
-  outline: 2px solid #144d05; /* currentColor или как у тебя в дизайне */
+  outline: 2px solid #144d05;
   outline-offset: 2px;
 }
 .qfl-title {
@@ -130,7 +130,6 @@
   gap: 12px;
   padding: 8px 10px;
   border-radius: 10px;
-  /* фон/бордер под стиль твоих item */
 }
 
 .qfl-setMain {
@@ -151,7 +150,7 @@
   font-size: 12px;
   opacity: 0.75;
 }
-/* empty state */
+
 .qfl-empty {
   display: flex;
   flex-direction: column;
