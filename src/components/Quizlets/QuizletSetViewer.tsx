@@ -380,6 +380,8 @@ export default function QuizletSetViewer({
                     onToggle={() => setFlipped((v) => !v)}
                     front={<div className="fc-text">{current.term}</div>}
                     back={<div className="fc-text">{current.explanation}</div>}
+                    speakTerm={current.term}
+                    speakExplanation={current.explanation}
                   />
                 </div>
 
@@ -423,7 +425,19 @@ export default function QuizletSetViewer({
               </>
             )}
           </div>
-
+          {/* Progress tracker */}
+          <div className="qsv-tracker-wrap" aria-label="Progress">
+            <div className="qsv-progress" role="progressbar"
+                aria-valuemin={1}
+                aria-valuemax={total}
+                aria-valuenow={idx + 1}
+                aria-valuetext={`${idx + 1} of ${total}`}>
+              <div
+                className="qsv-slider"
+                style={{ width: `${total ? ((idx + 1) / total) * 100 : 0}%` }}
+              />
+            </div>
+          </div>
           {/* Practice questions */}
           <div className="qsv-section">
             <div className="qsv-section-h">Practice questions for this set</div>

@@ -389,51 +389,11 @@ return (
         <div className="qz-cards">
           {filteredCards.map((card, index) => (
             <div className="qz-cardrow" key={card.id}>
-              <div className="qz-cardrow-num">{index + 1}</div>
-
-              <div className="qz-card">
-                <div className="qz-card-main">
-                  <div className="qz-field">
-                    <input
-                      className="qz-field-input"
-                      value={card.term}
-                      onChange={(e) => updateCard(card.id, { term: e.target.value })}
-                      placeholder="Term"
-                    />
-                    <div className="qz-field-meta">TERM</div>
-                  </div>
-
-                  <div className="qz-field">
-                    <input
-                      className="qz-field-input"
-                      value={card.definition}
-                      onChange={(e) => updateCard(card.id, { definition: e.target.value })}
-                      placeholder="Definition"
-                    />
-                    <div className="qz-field-meta">DEFINITION</div>
-                  </div>
-                </div>
-
-                <div className="qz-card-side">
-                  <label className="qz-imagebox" title="Add image">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) =>
-                        updateCard(card.id, { imageFile: e.target.files?.[0] ?? null })
-                      }
-                      style={{ display: "none" }}
-                    />
-                    <div className="qz-imagebox-inner">
-                      <div className="qz-imagebox-icon" aria-hidden="true">🖼</div>
-                      <div className="qz-imagebox-text">Image</div>
-                    </div>
-                  </label>
-
+              <div className="qz-cardrow-num">
+              <div className="qz-field-number">{index + 1}
                   <div className="qz-card-actions">
                     <button className="qz-iconbtn" type="button" title="Drag" aria-label="Drag">
-                      ≡
-                    </button>
+                    ≡</button>
                     <button
                       className="qz-iconbtn"
                       type="button"
@@ -444,8 +404,49 @@ return (
                       🗑
                     </button>
                   </div>
+              </div>
+              <div className="qz-card">
+                  <div className="qz-field-term">
+                    <input
+                      className="qz-field-input"
+                      value={card.term}
+                      onChange={(e) => updateCard(card.id, { term: e.target.value })}
+                      placeholder="Term"
+                    />
+                    <div className="qz-field-meta">TERM</div>
+                  </div>
+                  <div>
+                  <div className="qz-field-definition">
+                    <div className="qz-card-main">
+                    <input
+                      className="qz-field-input"
+                      value={card.definition}
+                      onChange={(e) => updateCard(card.id, { definition: e.target.value })}
+                      placeholder="Definition"
+                    />
+                    <div className="qz-field-meta">DEFINITION</div>
+                  </div>
+                  <div className="qz-card-side">
+                    <label className="qz-imagebox" title="Add image">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) =>
+                          updateCard(card.id, { imageFile: e.target.files?.[0] ?? null })
+                        }
+                        style={{ display: "none" }}
+                      />
+                      <div className="qz-imagebox-inner">
+                        <div className="qz-imagebox-icon" aria-hidden="true">🖼</div>
+                        <div className="qz-imagebox-text">Image</div>
+                      </div>
+                    </label>
+                   </div>
                 </div>
               </div>
+
+              </div>
+            </div>
             </div>
           ))}
 

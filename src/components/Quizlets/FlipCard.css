@@ -4,6 +4,12 @@
   background: transparent;
   padding: 0;
   cursor: pointer;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 200;
+}
+.fc:focus {
+  outline: 0;
+  outline-offset: 0;
 }
 
 .fc-inner {
@@ -42,18 +48,28 @@
 }
 
 .fc-text {
-  font-size: 34px;
+  font-size: 54px;
   line-height: 1.15;
-  font-weight: 700;
+  font-weight: 200;
   text-align: center;
-  letter-spacing: -0.02em;
 }
 
-.fc-hint {
+.fc-hint-right {
   position: absolute;
-  left: 18px;
-  top: 16px;
-  font-size: 13px;
+  top: 2rem;
+  right: 2rem;
+  font-size: 1rem;
   color: #6b7280;
-  font-weight: 600;
+  font-weight: 200;
+  gap: 2rem;
 }
+
+.fc-hint-left {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  font-size: 1rem;
+  color: #6b7280;
+  font-weight: 200;
+  gap: 2rem;
+  }
