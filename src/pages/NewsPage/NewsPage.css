@@ -1,0 +1,23 @@
+.nl{
+  width: min(1200px, 96vw);
+  margin: 18px auto 80px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 22px;
+}
+
+/* на мобиле rail уходит вниз */
+@media (max-width: 980px){
+  .nl{
+    grid-template-columns: 1fr;
+  }
+  .nl-rail{
+    position: static;
+  }
+}
+
+.nl-rail{
+  position: sticky;
+  top: 82px; /* под твой AppHeader; подстрой */
+  align-self: start;
+}

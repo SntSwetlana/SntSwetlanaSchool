@@ -3,6 +3,7 @@ import FlipCard from "./FlipCard";
 import "./QuizletSetViewer.css";
 
 import MatchGame from "./MatchGame";
+import LearnPractice from "./LearnPractice";
 import type { MatchCard } from "./MatchGame";
 
 type ApiCard = {
@@ -84,6 +85,7 @@ export default function QuizletSetViewer({
   const [learnResult, setLearnResult] = useState<"idle" | "correct" | "wrong">("idle");
 
   const [showMatch, setShowMatch] = useState(false);
+  const [showLearn, setShowLearn] = useState(false);
 
   const [trackProgress, setTrackProgress] = useState(false);
 
@@ -232,18 +234,12 @@ export default function QuizletSetViewer({
       })),
     [cards]
   );
-
+  
+  const isOverlay = showMatch || showLearn;
+  
   return (
-    <div className={showMatch ? "qsv is-game" : "qsv"}>
-      {showMatch ? (
-        <MatchGame
-          userId={userId}
-          setId={setId}
-          cards={matchCards}
-          onClose={() => setShowMatch(false)}
-        />
-      ) : (
-        <>
+    <div className={isOverlay ? "qsv is-game" : "qsv"}>
+       <>
           {/* top search */}
           <div className="qsv-top">
             <div className="qsv-top-left">
@@ -355,7 +351,7 @@ export default function QuizletSetViewer({
                 <button className="qsv-tile is-active" type="button">
                   Flashcards
                 </button>
-                <button className="qsv-tile" type="button">
+                <button className="qsv-tile" type="button" onClick={() => setShowLearn(true)}>
                   Learn
                 </button>
                 <button className="qsv-tile" type="button">
@@ -522,20 +518,36 @@ export default function QuizletSetViewer({
               ))}
             </div>
           </div>
-          {showMatch && (
-            <div className="mg-overlay" role="presentation">
-              <div className="mg-overlay__panel" role="dialog" aria-modal="true" aria-label="Match game">
-                <MatchGame
-                  userId={userId} // твой реальный userId
-                  setId={setId}
-                  cards={cards.map((c) => ({ id: c.id, term: c.term, explanation: c.explanation }))}
-                  onClose={() => setShowMatch(false)}
-                />
-              </div>
-            </div>
-          )}        
-        </>        
+      {/* Overlay: Match */}
+      {showMatch && (
+        <div className="mg-overlay" role="presentation" onClick={() => setShowMatch(false)}>
+          <div
+            className="mg-overlay__panel"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Match game"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <MatchGame userId={userId} setId={setId} cards={matchCards} onClose={() => setShowMatch(false)} />
+          </div>
+        </div>
       )}
+
+      {/* Overlay: Learn */}
+      {showLearn && (
+        <div className="mg-overlay" role="presentation" onClick={() => setShowLearn(false)}>
+          <div
+            className="mg-overlay__panel"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Learn"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <LearnPractice userId={userId} setId={setId} cards={matchCards} onClose={() => setShowLearn(false)} />
+          </div>
+        </div>
+      )}
+        </>        
     </div>
   );
 }

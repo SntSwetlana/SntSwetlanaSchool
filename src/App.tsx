@@ -18,6 +18,7 @@ import {
 } from './components/Pages';
 
 import '@/App.css';
+import NewsSidebar from './components/NewsSidebar';
 interface ProtectedRouteProps {
   children: React.ReactNode;
   allowedRoles?: string[];
@@ -34,6 +35,7 @@ const TestDashboard = lazy(() => import('./pages/TestDashboard'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
+const NewsPage = lazy(() => import("./pages/NewsPage"));
 //const UnauthorizedPage = lazy(() => import('./pages/UnauthorizedPage'));
 
 
@@ -212,7 +214,16 @@ function App() {
       <Router>
         <div className="App">
           <AppHeader />
-          <AppRoutes />
+
+          <div className="app-shell">
+            {/* MAIN */}
+            <main className="app-main">
+              <AppRoutes />
+            </main>
+
+            {/* RIGHT SIDEBAR */}
+            <NewsSidebar />
+          </div>
         </div>
       </Router>
     </AuthProvider>
