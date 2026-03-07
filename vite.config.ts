@@ -11,6 +11,7 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
+      "/images": "http://localhost:3000",
     },
   },
   resolve: {
