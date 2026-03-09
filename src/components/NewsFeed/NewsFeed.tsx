@@ -29,6 +29,7 @@ export type NewsItem = {
   image_url?: string | null;
   phonetic?: string | null;
   is_hot?: boolean | null;
+  explanation_en?: string | null;
   tags?: (string | null)[] | null; // у тебя Array<Nullable<Text>>
 };
 
@@ -162,7 +163,7 @@ export default function NewsFeed({
     const qq = q.trim().toLowerCase();
     if (!qq) return items;
     return items.filter((x) => {
-      const s = `${x.title ?? ""} ${x.excerpt ?? ""} ${x.body ?? ""} ${x.tags?.join(" ") ?? ""}`.toLowerCase();
+      const s = `${x.title ?? ""} ${x.excerpt ?? ""} ${x.explanation_en ?? ""} ${x.body ?? ""} ${x.tags?.join(" ") ?? ""}`.toLowerCase();
       return s.includes(qq);
     });
   }, [items, q]);
@@ -318,6 +319,7 @@ export default function NewsFeed({
                 <div className="nf-content">
                   {/* “Prompt / short task line” like on screenshot */}
                   {n.excerpt ? <div className="nf-excerpt">{n.excerpt}</div> : null}
+                  {n.explanation_en ? <div className="nf-explanation">{n.explanation_en}</div> : null}
 
                   {n.phonetic ? <div className="nf-phon">{n.phonetic}</div> : null}
 

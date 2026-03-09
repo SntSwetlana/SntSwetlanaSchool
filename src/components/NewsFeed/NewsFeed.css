@@ -249,6 +249,12 @@
   font-size: 24px;
 }
 
+.nf-explanation {
+  font-weight: 700;
+  color: #0f172a;
+  font-size: 16px;
+}
+
 .nf-phon {
   color: #64748b;
   font-weight: 700;
