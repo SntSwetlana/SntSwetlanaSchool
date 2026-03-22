@@ -84,7 +84,6 @@ export default function QuizletSetEditor({ setId, slug, autoCreate = false }: { 
             description: null,
             language_level: null,
             textbook_id: null,
-            folder_id: null,
             source_url: window.location.href,
             }),
           });
@@ -372,8 +371,8 @@ return (
                 <span className="qz-toggle-knob" />
               </button>
             </div>
-
-            <button className="qz-iconbtn" type="button" title="Shuffle" aria-label="Shuffle">
+ы
+            <button className="qz-iconbtn" type="button" title="Flip" aria-label="Shuffle">
               ⇄
             </button>
             <button className="qz-iconbtn" type="button" title="Keyboard" aria-label="Keyboard">

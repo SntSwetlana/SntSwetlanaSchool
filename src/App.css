@@ -25,7 +25,7 @@
 
 /* общий лэйаут: main + right sidebar */
 .app-shell{
-  width: min(1440px, 96vw);
+  width: min(2440px, 96vw);
   margin: 0 auto;
   display: grid;
   grid-template-columns: minmax(0, 1fr) var(--app-sidebar-w);
