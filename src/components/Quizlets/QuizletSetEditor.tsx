@@ -33,9 +33,34 @@ export default function QuizletSetEditor({ setId, slug, autoCreate = false }: { 
     const [customTermSep, setCustomTermSep] = useState("|");
     const [customCardSep, setCustomCardSep] = useState(";");
 
+    async function loadSet(signal?: AbortSignal) {
+      const res = await fetch(`/api/quizlet/sets/${setId}/full`, {
+        credentials: "include",
+        signal,
+      });
+
+      if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        throw new Error(`Load failed: ${res.status} ${text}`);
+      }
+
+      const data = await res.json();
+
+      setTitle(data.set.title ?? "");
+      setDescription(data.set.description ?? "");
+      setCards(
+        (data.cards ?? []).map((c: any) => ({
+          id: c.id,
+          term: c.term,
+          definition: c.explanation,
+          imageFile: null,
+        }))
+      );
+    }
 
     useEffect(() => {
     let cancelled = false;
+    const controller = new AbortController()
 
     const defaultCards: CardDraft[] = [
       { id: uid(), term: "", definition: "", imageFile: null },
@@ -44,76 +69,84 @@ export default function QuizletSetEditor({ setId, slug, autoCreate = false }: { 
     ];
 
     async function loadOrCreate() {
-      const res = await fetch(`/api/quizlet/sets/${setId}/full`, {
-        credentials: "include",
-      });
-
-      if (cancelled) return;
-
-      if (res.ok) {
-        const data = await res.json();
-        setTitle(data.set.title ?? "");
-        setDescription(data.set.description ?? "");
-        setCards(
-          (data.cards ?? []).map((c: any) => ({
-            id: c.id,
-            term: c.term,
-            definition: c.explanation,
-            imageFile: null,
-          }))
-        );
-        setSaveState("idle");
-        setSaveMsg("");
-        return;
-      }
-
-      if (res.status === 404) {
-        if (!autoCreate) {
-          setSaveState("error");
-          setSaveMsg("Set not found (404). Auto-create disabled.");
-          return;
-        }
-
-        const upsert = await fetch(`/api/quizlet/sets/${setId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({
-            slug,
-            title: slug,
-            description: null,
-            language_level: null,
-            textbook_id: null,
-            source_url: window.location.href,
-            }),
+      try {
+          const res = await fetch(`/api/quizlet/sets/${setId}/full`, {
+            credentials: "include",
+            signal: controller.signal,
           });
 
           if (cancelled) return;
 
-          if (!upsert.ok) {
-            const text = await upsert.text().catch(() => "");
-            setSaveState("error");
-            setSaveMsg(`Create failed: ${upsert.status} ${text}`);
+          if (res.ok) {
+            const data = await res.json();
+            setTitle(data.set.title ?? "");
+            setDescription(data.set.description ?? "");
+            setCards(
+              (data.cards ?? []).map((c: any) => ({
+                id: c.id,
+                term: c.term,
+                definition: c.explanation,
+                imageFile: null,
+              }))
+            );
+            setSaveState("idle");
+            setSaveMsg("");
             return;
           }
 
-          setTitle(slug);
-          setDescription("");
-          setCards(defaultCards); // или [] если хочешь без примера
-          setSaveState("idle");
-          setSaveMsg("");
-          return;
+          if (res.status === 404) {
+            if (!autoCreate) {
+              setSaveState("error");
+              setSaveMsg("Set not found (404). Auto-create disabled.");
+              return;
+            }
+
+            const upsert = await fetch(`/api/quizlet/sets/${setId}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              credentials: "include",
+              body: JSON.stringify({
+                slug,
+                title: slug,
+                description: null,
+                language_level: null,
+                textbook_id: null,
+                source_url: window.location.href,
+                }),
+              });
+
+              if (cancelled) return;
+
+              if (!upsert.ok) {
+                const text = await upsert.text().catch(() => "");
+                setSaveState("error");
+                setSaveMsg(`Create failed: ${upsert.status} ${text}`);
+                return;
+              }
+
+              setTitle(slug);
+              setDescription("");
+              setCards(defaultCards); // или [] если хочешь без примера
+              setSaveState("idle");
+              setSaveMsg("");
+              return;
+            }
+
+            const text = await res.text().catch(() => "");
+            setSaveState("error");
+            setSaveMsg(`Load failed: ${res.status} ${text}`);
+          }
+          catch (e: any) {
+          if (cancelled) return;
+          setSaveState("error");
+          setSaveMsg(e?.message ?? "Load failed");
         }
-
-        const text = await res.text().catch(() => "");
-        setSaveState("error");
-        setSaveMsg(`Load failed: ${res.status} ${text}`);
       }
-
       loadOrCreate();
 
       return () => {
         cancelled = true;
+        controller.abort();
       };
     }, [setId, slug, autoCreate]);
 
@@ -202,6 +235,35 @@ export default function QuizletSetEditor({ setId, slug, autoCreate = false }: { 
           setSaveMsg(e?.message ?? "Save failed");
       }
     }
+    async function onFlipAll() {
+  try {
+    setSaveState("saving");
+    setSaveMsg("Flipping cards...");
+
+    const res = await fetch(`/api/quizlet/sets/${setId}/cards:flip`, {
+      method: "POST",
+      credentials: "include",
+    });
+
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      throw new Error(`Flip failed: ${res.status} ${text}`);
+    }
+
+    await loadSet();
+
+    setSaveState("saved");
+    setSaveMsg("Cards flipped");
+
+    window.setTimeout(() => {
+      setSaveState("idle");
+      setSaveMsg("");
+    }, 2000);
+  } catch (e: any) {
+    setSaveState("error");
+    setSaveMsg(e?.message ?? "Flip failed");
+  }
+}
 
   const filteredCards = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -371,8 +433,13 @@ return (
                 <span className="qz-toggle-knob" />
               </button>
             </div>
-ы
-            <button className="qz-iconbtn" type="button" title="Flip" aria-label="Shuffle">
+            <button
+              className="qz-iconbtn"
+              type="button"
+              title="Flip"
+              aria-label="Flip terms and definitions"
+              onClick={onFlipAll}
+            >
               ⇄
             </button>
             <button className="qz-iconbtn" type="button" title="Keyboard" aria-label="Keyboard">

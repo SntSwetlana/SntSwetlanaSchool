@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import FlipCard from "./FlipCard";
 import "./QuizletSetViewer.css";
+import arrow_forward from "./../../assets/arrow_forward_24.svg";
 
 import MatchGame from "./MatchGame";
 import LearnPractice from "./LearnPractice";
@@ -398,8 +399,23 @@ export default function QuizletSetViewer({
                     <div className="qsv-count">
                       {idx + 1} / {total}
                     </div>
-                    <button className="qsv-navbtn" disabled={!canNext} onClick={next} type="button">
-                      →
+                    <button 
+                    className="qsv-navbtn" 
+                    disabled={!canNext} 
+                    onClick={next} 
+                    type="button">                      
+                      <svg
+                        className="qsv-navicon"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 -960 960 960"
+                        aria-hidden="true"
+                      >
+                        <path
+                          fill="currentColor"
+                          d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z"
+                        />
+                      </svg>
+
                     </button>
                   </div>
 

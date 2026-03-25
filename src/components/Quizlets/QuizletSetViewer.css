@@ -96,6 +96,10 @@
   border: 1px solid #e5e7eb;
   background: #fff;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  
 }
 
 .qsv-cta {
@@ -190,13 +194,21 @@
 .qsv-navbtn {
   width: 40px;
   height: 40px;
+  display: flex;
+  padding: 0;
   border-radius: 999px;
   border: 1px solid #e5e7eb;
   background: #fff;
   cursor: pointer;
-  font-weight: 900;
+  justify-content: center;
+  align-items: center;
 }
-
+.qsv-navbtn svg {
+  width: 20px;
+  height: 20px;
+  color: #144d05;
+  display: block;
+}
 .qsv-navbtn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
